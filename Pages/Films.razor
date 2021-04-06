@@ -1,0 +1,83 @@
+﻿@page "/films"
+
+@using shows_buzz_feed.Data
+@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.Film
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services 
+@inject FilmService filmService
+@inject IJSRuntime jsRuntime
+@inject IModalService Modal
+
+<h1>Films List</h1>
+
+<p>Here you can see all the films</p>
+
+@if (films == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+<table class="table">
+    <td><button @onclick="@(() => ShowCreateFilm())" class="btn btn-primary">Create Film</button></td>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Length</th>
+            <th>Budget</th>
+            <th>ReleaseYear</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var film in films.Films)
+        {
+            <tr>
+                <td>@film.Name</td>
+                <td>@film.Length</td>
+                <td>@film.Budget</td>
+                <td>@film.ReleaseYear</td>
+                @*<td><button @onclick="@(() => ShowEditFilm(film.Id))" class="btn btn-primary">Edit</button></td>*@
+                <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+@code {
+    private FilmListViewModel films;
+
+    protected override async Task OnInitializedAsync()
+    {
+        films = await filmService.GetFilmsAsync();
+    }
+
+    protected async Task Delete(int id)
+    {
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
+        if (confirmed)
+        {
+            await filmService.DeleteFilmAsync(id);
+            await Load();
+            StateHasChanged();
+        }
+    }
+
+    protected async Task ShowCreateFilm()
+    {
+        Modal.Show<FilmCreate>("Create Film");
+    }
+
+    //protected async Task ShowEditFilm(int filmId)
+    //{
+    //    var parameters = new ModalParameters();
+    //    parameters.Add(nameof(FilmEdit.filmId), filmId);
+
+    //    Modal.Show<FilmEdit>("Edit Film", parameters);
+    //}
+
+    protected async Task Load() {
+        films = await filmService.GetFilmsAsync();
+    }
+}

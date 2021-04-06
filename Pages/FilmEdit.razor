@@ -1,0 +1,84 @@
+﻿@*@using shows_buzz_feed.Mappings.Film
+@using shows_buzz_feed.Services
+@inject FilmService service
+@inject IToastService toastService
+
+@if (film != null)
+{
+    <div class="simple-form">
+        <EditForm Model="@film" OnValidSubmit="@UpdateFilm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group">
+                <label for="orderDate">orderDate</label>
+                <InputDate type="name" class="form-control" id="orderDate" @bind-Value="@film.Name" />
+            </div>
+
+            <div class="form-group">
+                <label for="price">price</label>
+                <InputNumber TValue="double" id="budget" class="form-control" @bind-Value="@film.Budget" />
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status</label>
+                <InputNumber TValue="double" id="releaseYear" class="form-control" @bind-Value="@film.ReleaseYear" />
+            </div>
+
+            <div class="form-group">
+                <label for="adress">Adress</label>
+                <InputNumber TValue="double" id="length" class="form-control" @bind-Value="@film.Length" />
+            </div>
+
+            <div class="form-group">
+                <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+            </div>
+        </EditForm>
+        <button @onclick="BlazoredModal.CancelAsync" class="btn btn-secondary">Cancel</button>
+    </div>
+}
+else
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+}
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
+    [Parameter] public int filmId { get; set; }
+
+    FilmViewModel film { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        film = await service.GetFilmAsync(filmId);
+    }
+
+    protected async Task UpdateFilm()
+    {
+        UpdateFilmCommand update = new UpdateFilmCommand()
+        {
+            Id = filmId,
+            Name = film.Name,
+            Budget = film.Budget,
+            ReleaseYear = film.ReleaseYear,
+            Length = film.Length,
+        };
+
+        var result = await service.UpdateFilmAsync(update);
+
+        if (result > 0)
+        {
+            toastService.ShowSuccess("Film has been updated successfully");
+        }
+        else
+        {
+            toastService.ShowError("Film has not been updated");
+        }
+
+        await BlazoredModal.CloseAsync(ModalResult.Ok<FilmViewModel>(film));
+    }
+
+}*@
