@@ -54,10 +54,18 @@ namespace shows_buzz_feed.Services
             return Convert.ToInt32(result.Content.ReadAsStringAsync().Result);
         }
 
-        public async Task<int> UpdateFilmAsync(UpdateFilmCommand command)
+        public async Task<HttpResponseMessage> UpdateFilmAsync(UpdateFilmCommand command)
         {
-            var result = await client.PutAsync($"{baseUrl}/api/films/", RequestHelper.GetStringContentFromObject(command));
-            return Convert.ToInt32(result.Content.ReadAsStringAsync().Result);
+            try
+            {
+                return await client.PutAsync($"{baseUrl}/api/films/", RequestHelper.GetStringContentFromObject(command));
+            }
+            catch (Exception e)
+            {
+
+                var message = e.InnerException.Message;
+                throw;
+            }
         }
 
         public async Task<HttpResponseMessage> DeleteFilmAsync(int id)

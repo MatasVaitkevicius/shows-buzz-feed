@@ -80,8 +80,7 @@ else
         };
 
         var result = await service.UpdateFilmAsync(update);
-
-        if (result > 0)
+        if (result.IsSuccessStatusCode)
         {
             toastService.ShowSuccess("Film has been updated successfully");
         }
