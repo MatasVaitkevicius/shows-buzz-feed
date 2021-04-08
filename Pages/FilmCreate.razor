@@ -1,5 +1,4 @@
-﻿@using shows_buzz_feed.Data
-@using shows_buzz_feed.Services
+﻿@using shows_buzz_feed.Services
 @using shows_buzz_feed.Mappings.Film
 @using Microsoft.JSInterop
 @using Blazored.Modal.Services
@@ -14,45 +13,63 @@
         <ValidationSummary />
 
         <div class="form-group">
-            <label for="orderDate">orderDate</label>
-            <InputNumber TValue="double" id="budget" class="form-control" @bind-Value="@filmModel.Budget" />
+            <label for="budget">Budget $</label>
+            <InputNumber TValue="double" id="budget" min="0" class="form-control" @bind-Value="@filmModel.Budget" />
         </div>
 
         <div class="form-group">
-            <label for="price">price</label>
-            <InputNumber TValue="double" id="length" class="form-control" @bind-Value="@filmModel.Length" />
+            <label for="length">Length, minutes</label>
+            <InputNumber TValue="double" id="length" min="0" class="form-control" @bind-Value="@filmModel.Length" />
         </div>
 
         <div class="form-group">
-            <label for="status">Status</label>
-            <InputText id="name" class="form-control" @bind-Value="@filmModel.Name" />
+            <label for="name">Name</label>
+            <InputText id="name" required="required" class="form-control" @bind-Value="@filmModel.Name" />
         </div>
 
         <div class="form-group">
-            <label for="adress">Adress</label>
-            <InputNumber TValue="int" id="releaseYear" class="form-control" @bind-Value="@filmModel.ReleaseYear" />
+            <label for="releaseYear">Release Year</label>
+            <InputNumber TValue="int" id="releaseYear" min="0" class="form-control" @bind-Value="@filmModel.ReleaseYear" />
         </div>
 
+        <div class="form-group">
+            <label for="releaseYear">Genre</label>
+            <InputSelect @bind-Value="@filmModel.Genre">
+                <option>Comedy</option>
+                <option>Thriller</option>
+                <option>Action</option>
+                <option>Drama</option>
+            </InputSelect>
+        </div>
         <div class="form-group">
             <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
         </div>
     </EditForm>
-    <button @onclick="BlazoredModal.CancelAsync" class="btn btn-secondary">Cancel</button>
+        <button @onclick="BlazoredModal.CancelAsync" class="btn btn-secondary">Cancel</button>
 </div>
 
 @code {
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
 
-    private FilmViewModel filmModel = new FilmViewModel();
+    FilmViewModel filmModel = new FilmViewModel();
 
-    private async Task SubmitFilm()
+    void BackgroundCancelDisabled()
     {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+    }
+
+    private async Task SubmitFilm(EditContext film)
+    {
+        if (filmModel.Genre == null) {
+            filmModel.Genre = "Comedy";
+        }
         CreateFilmCommand create = new CreateFilmCommand()
         {
             Length = filmModel.Length,
             Budget = filmModel.Budget,
             ReleaseYear = filmModel.ReleaseYear,
             Name = filmModel.Name,
+            Genre = filmModel.Genre,
         };
 
         var result = await filmService.InsertFilmAsync(create);

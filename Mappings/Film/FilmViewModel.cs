@@ -12,5 +12,6 @@ namespace shows_buzz_feed.Mappings.Film
         public double Budget { get; set; }
         public int ReleaseYear { get; set; }
         public string Name { get; set; }
+        public string Genre { get; set; }
     }
 }

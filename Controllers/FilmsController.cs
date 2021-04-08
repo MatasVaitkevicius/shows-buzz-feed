@@ -60,6 +60,7 @@ namespace shows_buzz_feed.Controllers
                 Budget = command.Budget,
                 ReleaseYear = command.ReleaseYear,
                 Name = command.Name,
+                Genre = command.Genre,
             };
 
             _context.Films.Add(entity);
@@ -86,6 +87,7 @@ namespace shows_buzz_feed.Controllers
             entity.Length = command.Length;
             entity.ReleaseYear = command.ReleaseYear;
             entity.Name = command.Name;
+            entity.Genre = command.Genre;
 
             await _context.SaveChangesAsync();
 

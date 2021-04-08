@@ -4,10 +4,11 @@
 @using shows_buzz_feed.Services
 @using shows_buzz_feed.Mappings.Film
 @using Microsoft.JSInterop
-@using Blazored.Modal.Services 
+@using Blazored.Modal.Services
 @inject FilmService filmService
 @inject IJSRuntime jsRuntime
 @inject IModalService Modal
+@using shows_buzz_feed.Pages
 
 <h1>Films List</h1>
 
@@ -20,33 +21,39 @@
 else
 {
 <table class="table">
-    <td><button @onclick="@(() => ShowCreateFilm())" class="btn btn-primary">Create Film</button></td>
     <thead>
         <tr>
             <th>Name</th>
-            <th>Length</th>
-            <th>Budget</th>
-            <th>ReleaseYear</th>
+            <th>Length Minutes</th>
+            <th>Budget $</th>
+            <th>Release Year</th>
+            <th>Genre</th>
+            <th>Edit</th>
+            <th>Delete</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var film in films.Films)
         {
-            <tr>
-                <td>@film.Name</td>
-                <td>@film.Length</td>
-                <td>@film.Budget</td>
-                <td>@film.ReleaseYear</td>
-                @*<td><button @onclick="@(() => ShowEditFilm(film.Id))" class="btn btn-primary">Edit</button></td>*@
-                <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>
-            </tr>
+        <tr>
+            <td>@film.Name</td>
+            <td>@film.Length</td>
+            <td>@film.Budget$</td>
+            <td>@film.ReleaseYear</td>
+            <td>@film.Genre</td>
+            <td><button @onclick="@(() => ShowEditFilm(film.Id))" class="btn btn-warning">Edit</button></td>
+            <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>
+        </tr>
         }
+        <tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>
     </tbody>
 </table>
 }
 
 @code {
     private FilmListViewModel films;
+
+    string _message;
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,20 +71,39 @@ else
         }
     }
 
-    protected async Task ShowCreateFilm()
+    protected async void ShowCreateFilm()
     {
-        Modal.Show<FilmCreate>("Create Film");
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+        var messageForm = Modal.Show<FilmCreate>("Create Film", options);
+        var result = await messageForm.Result;
+
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
+
     }
 
-    //protected async Task ShowEditFilm(int filmId)
-    //{
-    //    var parameters = new ModalParameters();
-    //    parameters.Add(nameof(FilmEdit.filmId), filmId);
+    protected async Task ShowEditFilm(int filmId)
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(FilmEdit.filmId), filmId);
+        var messageForm = Modal.Show<FilmEdit>("Edit Film", parameters, options);
+        var result = await messageForm.Result;
 
-    //    Modal.Show<FilmEdit>("Edit Film", parameters);
-    //}
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
+    }
 
-    protected async Task Load() {
+    protected async Task Load()
+    {
         films = await filmService.GetFilmsAsync();
     }
 }
