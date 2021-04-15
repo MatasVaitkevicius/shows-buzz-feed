@@ -74,15 +74,15 @@
 
         var result = await filmService.InsertFilmAsync(create);
 
-        if (result > 0)
-        {
-            toastService.ShowSuccess("Film has been added successfully");
-            StateHasChanged();
-        }
-        else
-        {
-            toastService.ShowError("Film has not been added");
-        }
+        //if (result > 0)
+        //{
+        //    toastService.ShowSuccess("Film has been added successfully");
+        //    StateHasChanged();
+        //}
+        //else
+        //{
+        //    toastService.ShowError("Film has not been added");
+        //}
 
         await BlazoredModal.CloseAsync(ModalResult.Ok<FilmViewModel>(filmModel));
     }
