@@ -37,6 +37,7 @@ namespace shows_buzz_feed
             try
             {
                 services.AddSingleton<FilmService>();
+                services.AddSingleton<SeriesService>();
             }
             catch (Exception e)
             {
