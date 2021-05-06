@@ -1,0 +1,64 @@
+﻿@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.Rating
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services
+@inject RatingService ratingService
+@inject IJSRuntime JsRuntime
+@inject IToastService toastService
+@inject IModalService Modal
+
+<div style="border-radius: 5px;background-color: #f2f2f2;padding: 20px;">
+    <EditForm Model="@ratingModel" OnValidSubmit="@SubmitRating">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="name">Name</label>
+            <InputText id="name" required="required" class="form-control" @bind-Value="@ratingModel.Comment" />
+        </div>
+
+        <div class="form-group">
+            <label for="releaseYear">Rating</label>
+            <InputSelect @bind-Value="@ratingModel.Rate">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+        </div>
+    </EditForm>
+    <button @onclick="BlazoredModal.CancelAsync" class="btn btn-secondary">Cancel</button>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
+    RatingViewModel ratingModel = new RatingViewModel();
+
+    void BackgroundCancelDisabled()
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+    }
+
+    private async Task SubmitRating(EditContext film)
+    {
+        if (ratingModel.Rate == 0)
+        {
+            ratingModel.Rate = 1;
+        }
+
+        CreateRatingCommand create = new CreateRatingCommand()
+        {
+            Comment = ratingModel.Comment,
+            Rate = ratingModel.Rate
+        };
+
+        var result = await ratingService.InsertRatingAsync(create);
+
+        await BlazoredModal.CloseAsync(ModalResult.Ok<RatingViewModel>(ratingModel));
+    }
+}

@@ -14,17 +14,15 @@ namespace shows_buzz_feed.Data
         }
         public DbSet<Film> Films { get; set; }
         public DbSet<Series> Series { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<Film>()
-                .Property(e => e.Id)
-                .ValueGeneratedOnAdd();
-
-            builder.Entity<Series>()
-                .Property(e => e.Id)
-                .ValueGeneratedOnAdd();
+            builder.Entity<Film>();
+            builder.Entity<Series>();
+            builder.Entity<Rating>();
         }
     }
 }

@@ -1,0 +1,74 @@
+﻿@page "/ratings"
+
+@using shows_buzz_feed.Data
+@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.Rating
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services
+@inject RatingService ratingService
+@inject IJSRuntime jsRuntime
+@inject IModalService Modal
+@using shows_buzz_feed.Pages
+
+<h1>Ratings List</h1>
+
+<p>Here you can see all the ratings</p>
+
+@if (ratings == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Comment</th>
+                <th>DateRated</th>
+                <th>Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rating in ratings.Ratings)
+            {
+                <tr>
+                    <td>@rating.Comment</td>
+                    <td>@rating.DateRated</td>
+                    <td>@rating.Rate</td>
+                </tr>
+            }
+            <tr><button @onclick="@(() => ShowCreateRating())" class="btn btn-info">Create Rating</button></tr>
+        </tbody>
+    </table>
+}
+
+@code {
+    private RatingListViewModel ratings;
+
+    string _message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ratings = await ratingService.GetRatingsAsync();
+    }
+
+    protected async void ShowCreateRating()
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+        var messageForm = Modal.Show<RatingCreate>("Create Rating", options);
+        var result = await messageForm.Result;
+
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
+
+    }
+
+    protected async Task Load()
+    {
+        ratings = await ratingService.GetRatingsAsync();
+    }
+}

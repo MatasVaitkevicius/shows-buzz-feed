@@ -24,6 +24,7 @@ namespace shows_buzz_feed.Controllers
             _context = context;
             _mapper = mapper;
         }
+
         [HttpGet]
         public async Task<SeriesListViewModel> GetAllSeries()
         {
