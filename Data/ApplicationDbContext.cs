@@ -15,7 +15,8 @@ namespace shows_buzz_feed.Data
         public DbSet<Film> Films { get; set; }
         public DbSet<Series> Series { get; set; }
         public DbSet<Rating> Ratings { get; set; }
-
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserSeenFilm> UserSeenFilms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -23,6 +24,15 @@ namespace shows_buzz_feed.Data
             builder.Entity<Film>();
             builder.Entity<Series>();
             builder.Entity<Rating>();
+            builder.Entity<User>();
+            builder.Entity<UserSeenFilm>()
+                .HasOne(e => e.Film)
+                .WithMany(i => i.UserSeenFilms)
+                .HasForeignKey(e => e.UserId);
+            builder.Entity<UserSeenFilm>()
+                .HasOne(e => e.User)
+                .WithMany(i => i.UserSeenFilms)
+                .HasForeignKey(e => e.UserId);
         }
     }
 }

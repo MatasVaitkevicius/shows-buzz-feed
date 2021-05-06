@@ -6,19 +6,17 @@ using System.Threading.Tasks;
 
 namespace shows_buzz_feed.Models
 {
-    public class Film
+    public class User
     {
         [Key]
         public int Id { get; set; }
-        public double Length { get; set; }
-        public double Budget { get; set; }
-        public int ReleaseYear { get; set; }
-        public string Name { get; set; }
-        public string Genre { get; set; }
-        public Film()
+
+        public User()
         {
             UserSeenFilms = new List<UserSeenFilm>();
         }
         public List<UserSeenFilm> UserSeenFilms { get; set; }
+        public string Name { get; set; }
+
     }
 }
