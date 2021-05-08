@@ -62,7 +62,7 @@ namespace shows_buzz_feed.Controllers
             _context.Users.Add(entity);
 
             await _context.SaveChangesAsync();
-            //TODO
+
             return Ok(entity.Id);
         }
     }

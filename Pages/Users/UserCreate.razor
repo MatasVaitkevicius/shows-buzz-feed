@@ -1,22 +1,21 @@
 ﻿@using shows_buzz_feed.Services
-@using shows_buzz_feed.Mappings.Rating
+@using shows_buzz_feed.Mappings.User
 @using Microsoft.JSInterop
 @using Blazored.Modal.Services
-@inject RatingService ratingService
+@inject UserService userService
 @inject IJSRuntime JsRuntime
 @inject IToastService toastService
 @inject IModalService Modal
 
 <div style="border-radius: 5px;background-color: #f2f2f2;padding: 20px;">
-    <EditForm Model="@ratingModel" OnValidSubmit="@SubmitRating">
+    <EditForm Model="@userModel" OnValidSubmit="@CreateUser">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
         <div class="form-group">
-            <label for="comment">Comment</label>
-            <InputText id="comment" required="required" class="form-control" @bind-Value="@ratingModel.Comment" />
+            <label for="name">Name</label>
+            <InputText id="name" required="required" class="form-control" @bind-Value="@userModel.Name" />
         </div>
-
         <div class="form-group">
             <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
         </div>
@@ -27,22 +26,22 @@
 @code {
     [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
 
-    RatingViewModel ratingModel = new RatingViewModel();
+    UserViewModel userModel = new UserViewModel();
 
     void BackgroundCancelDisabled()
     {
         var options = new ModalOptions { DisableBackgroundCancel = true };
     }
 
-    private async Task SubmitRating(EditContext film)
+    private async Task CreateUser(EditContext film)
     {
-        CreateRatingCommand create = new CreateRatingCommand()
+        CreateUserCommand create = new CreateUserCommand()
         {
-            Comment = ratingModel.Comment,
+            Name = userModel.Name,
         };
 
-        var result = await ratingService.InsertRatingAsync(create);
+        var result = await userService.InsertUserAsync(create);
 
-        await BlazoredModal.CloseAsync(ModalResult.Ok<RatingViewModel>(ratingModel));
+        await BlazoredModal.CloseAsync(ModalResult.Ok<UserViewModel>(userModel));
     }
 }

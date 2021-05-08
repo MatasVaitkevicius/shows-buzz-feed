@@ -32,10 +32,8 @@ else
 <tr>
     <td>@users.Id</td>
     <td>@users.Name</td>
-    @*<td><button @onclick="@(() => ShowEditusers(film.Id))" class="btn btn-warning">Edit</button></td>
-        <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>*@
 </tr>}
-        @*<tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>*@
+    <tr><button @onclick="@(() => ShowCreateUser())" class="btn btn-info">Create Film</button></tr>
     </tbody>
 </table>}
 
@@ -51,5 +49,19 @@ else
     protected async Task Load()
     {
         users = await userService.GetUsersAsync();
-    } 
+    }
+
+    protected async void ShowCreateUser()
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+        var messageForm = Modal.Show<UserCreate>("Create User", options);
+        var result = await messageForm.Result;
+
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
+    }
 }
