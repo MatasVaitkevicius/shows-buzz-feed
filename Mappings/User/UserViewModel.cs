@@ -11,7 +11,7 @@ namespace shows_buzz_feed.Mappings.User
     {
         [Key]
         public int Id { get; set; }
-        public int Name { get; set; }
+        public string Name { get; set; }
         public IEnumerable<UserSeenFilmViewModel> UserSeenFilms { get; set; }
     }
 }

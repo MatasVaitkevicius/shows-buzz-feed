@@ -21,14 +21,25 @@ namespace shows_buzz_feed.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<Film>();
-            builder.Entity<Series>();
-            builder.Entity<Rating>();
-            builder.Entity<User>();
+            builder.Entity<Film>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            builder.Entity<Series>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            builder.Entity<Rating>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            builder.Entity<User>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            builder.Entity<UserSeenFilm>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
             builder.Entity<UserSeenFilm>()
                 .HasOne(e => e.Film)
                 .WithMany(i => i.UserSeenFilms)
-                .HasForeignKey(e => e.UserId);
+                .HasForeignKey(e => e.FilmId);
             builder.Entity<UserSeenFilm>()
                 .HasOne(e => e.User)
                 .WithMany(i => i.UserSeenFilms)

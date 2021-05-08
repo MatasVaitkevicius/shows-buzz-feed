@@ -9,13 +9,8 @@ namespace shows_buzz_feed.Mappings.UserSeenFilm
 {
     public class CreateUserSeenFilmCommand
     {
-        [Key]
-        public int Id { get; set; }
         public int FilmId { get; set; }
-        // TODO
         public int UserId { get; set; }
-        public int RouteId { get; set; }
-
-        public DateTime RouteDate { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

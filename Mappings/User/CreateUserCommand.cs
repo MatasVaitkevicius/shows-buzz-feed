@@ -8,8 +8,6 @@ namespace shows_buzz_feed.Mappings.User
 {
     public class CreateUserCommand
     {
-        [Key]
-        public int Id { get; set; }
-        public int Name { get; set; }
+        public string Name { get; set; }
     }
 }

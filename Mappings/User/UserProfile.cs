@@ -25,7 +25,7 @@ namespace shows_buzz_feed.Mappings
                         UserId = u.UserId,
                         UserName = u.User.Name,
                         CreatedAt = u.CreatedAt
-                        }) : null));
+                    }) : null));
         }
     }
 }

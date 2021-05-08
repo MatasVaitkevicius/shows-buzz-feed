@@ -10,8 +10,8 @@ using shows_buzz_feed.Data;
 namespace shows_buzz_feed.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210506200043_Ratings")]
-    partial class Ratings
+    [Migration("20210508125738_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -85,6 +85,75 @@ namespace shows_buzz_feed.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Series");
+                });
+
+            modelBuilder.Entity("shows_buzz_feed.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("shows_buzz_feed.Models.UserSeenFilm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FilmId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FilmId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserSeenFilms");
+                });
+
+            modelBuilder.Entity("shows_buzz_feed.Models.UserSeenFilm", b =>
+                {
+                    b.HasOne("shows_buzz_feed.Models.Film", "Film")
+                        .WithMany("UserSeenFilms")
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("shows_buzz_feed.Models.User", "User")
+                        .WithMany("UserSeenFilms")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Film");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("shows_buzz_feed.Models.Film", b =>
+                {
+                    b.Navigation("UserSeenFilms");
+                });
+
+            modelBuilder.Entity("shows_buzz_feed.Models.User", b =>
+                {
+                    b.Navigation("UserSeenFilms");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,67 @@
+﻿@page "/UserSeenFilms"
+
+@using shows_buzz_feed.Data
+@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.UserSeenFilm
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services
+@inject UserSeenFilmService userSeenFilmService
+@inject IJSRuntime jsRuntime
+@inject IModalService Modal
+@using shows_buzz_feed.Pages
+
+<h3>User Seen Films</h3>
+
+<p>Here you can see all the User Seen Films</p>
+
+@if (userSeenFilms == null)
+{
+<p><em>Loading...</em></p> }
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>FilmId</th>
+            <th>Film Name</th>
+            <th>UserId</th>
+            <th>User Name</th>
+            <th>CreatedAt</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var userSeenFilm in userSeenFilms.UserSeenFilms)
+        {
+        <tr>
+            <td>@userSeenFilm.Id</td>
+            <td>@userSeenFilm.FilmId</td>
+            <td>@userSeenFilm.FilmName</td>
+            <td>@userSeenFilm.UserId</td>
+            <td>@userSeenFilm.UserName</td>
+            <td>@userSeenFilm.CreatedAt</td>
+
+            @*<td><button @onclick="@(() => ShowEditusers(film.Id))" class="btn btn-warning">Edit</button></td>
+        <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>*@
+        </tr>
+}
+        @*<tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>*@
+    </tbody>
+</table>}
+
+@code { private UserSeenFilmListViewModel userSeenFilms;
+
+    string _message;
+    // WHICH USER FILMS TO SEE
+    int userId = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(userId);
+    }
+
+    protected async Task Load()
+    {
+        userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(userId);
+    }
+}

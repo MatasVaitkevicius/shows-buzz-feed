@@ -14,19 +14,9 @@
 
         <div class="form-group">
             <label for="name">Name</label>
-            <InputText id="name" required="required" class="form-control" @bind-Value="@ratingModel.Comment" />
+            <InputText id="comment" required="required" class="form-control" @bind-Value="@ratingModel.Comment" />
         </div>
 
-        <div class="form-group">
-            <label for="releaseYear">Rating</label>
-            <InputSelect @bind-Value="@ratingModel.Rate">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-            </InputSelect>
-        </div>
         <div class="form-group">
             <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
         </div>
@@ -46,15 +36,9 @@
 
     private async Task SubmitRating(EditContext film)
     {
-        if (ratingModel.Rate == 0)
-        {
-            ratingModel.Rate = 1;
-        }
-
         CreateRatingCommand create = new CreateRatingCommand()
         {
             Comment = ratingModel.Comment,
-            Rate = ratingModel.Rate
         };
 
         var result = await ratingService.InsertRatingAsync(create);

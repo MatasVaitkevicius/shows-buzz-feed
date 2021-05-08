@@ -3,12 +3,14 @@
 @using shows_buzz_feed.Data
 @using shows_buzz_feed.Services
 @using shows_buzz_feed.Mappings.Film
+@using shows_buzz_feed.Mappings.UserSeenFilm
 @using Microsoft.JSInterop
 @using Blazored.Modal.Services
 @inject FilmService filmService
+@inject UserSeenFilmService userSeenFilmService
 @inject IJSRuntime jsRuntime
 @inject IModalService Modal
-@using shows_buzz_feed.Pages
+@using shows_buzz_feed.Pages.Films
 
 <h1>Films List</h1>
 
@@ -20,34 +22,35 @@
 }
 else
 {
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Length Minutes</th>
-            <th>Budget $</th>
-            <th>Release Year</th>
-            <th>Genre</th>
-            <th>Edit</th>
-            <th>Delete</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var film in films.Films)
-        {
-        <tr>
-            <td>@film.Name</td>
-            <td>@film.Length</td>
-            <td>@film.Budget$</td>
-            <td>@film.ReleaseYear</td>
-            <td>@film.Genre</td>
-            <td><button @onclick="@(() => ShowEditFilm(film.Id))" class="btn btn-warning">Edit</button></td>
-            <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>
-        </tr>
-        }
-        <tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>
-    </tbody>
-</table>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Length Minutes</th>
+                <th>Budget $</th>
+                <th>Release Year</th>
+                <th>Genre</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var film in films.Films)
+            {
+                <tr>
+                    <td>@film.Name</td>
+                    <td>@film.Length</td>
+                    <td>@film.Budget$</td>
+                    <td>@film.ReleaseYear</td>
+                    <td>@film.Genre</td>
+                    <td><button @onclick="@(() => ShowEditFilm(film.Id))" class="btn btn-warning">Edit</button></td>
+                    <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>
+                    <td><button @onclick="@(() => MovieSeen(film.Id))" class="btn btn-danger">Seen</button></td>
+                </tr>
+            }
+            <tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>
+        </tbody>
+    </table>
 }
 
 @code {
@@ -69,6 +72,29 @@ else
             await Load();
             StateHasChanged();
         }
+    }
+
+    protected async Task MovieSeen(int filmId)
+    {
+        CreateUserSeenFilmCommand create = new CreateUserSeenFilmCommand()
+        {
+            FilmId = filmId,
+            UserId = 1
+        };
+
+        var result = await userSeenFilmService.InsertUserSeenFilmAsync(create);
+
+        //if (result > 0)
+        //    {
+        //        toastService.ShowSuccess("Route has been added successfully");
+        //        await loadItems();
+        //        tab = Tab.Overview;
+        //        StateHasChanged();
+        //    }
+        //    else
+        //    {
+        //        toastService.ShowError("Route has not been added");
+        //    }
     }
 
     protected async void ShowCreateFilm()

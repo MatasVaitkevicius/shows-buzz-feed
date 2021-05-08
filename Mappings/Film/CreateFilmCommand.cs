@@ -7,7 +7,6 @@ namespace shows_buzz_feed.Mappings.Film
 {
     public class CreateFilmCommand
     {
-        public int Id { get; set; }
         public double Length { get; set; }
         public double Budget { get; set; }
         public int ReleaseYear { get; set; }

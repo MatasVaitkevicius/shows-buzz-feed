@@ -8,11 +8,8 @@ namespace shows_buzz_feed.Mappings.UserSeenFilm
 {
     public class CreateUserSeenFilmModel
     {
-        [Required]
-        public string FilmId { get; set; }
-        [Required]
-        public string UserId { get; set; }
-        [Required]
+        public int FilmId { get; set; }
+        public int UserId { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }
