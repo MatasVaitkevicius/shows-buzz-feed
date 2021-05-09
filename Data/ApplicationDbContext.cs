@@ -44,6 +44,10 @@ namespace shows_buzz_feed.Data
                 .HasOne(e => e.User)
                 .WithMany(i => i.UserSeenFilms)
                 .HasForeignKey(e => e.UserId);
+            builder.Entity<Rating>()
+                .HasOne(e => e.UserSeenFilm)
+                .WithMany(i => i.Ratings)
+                .HasForeignKey(e => e.UserSeenFilmId);
         }
     }
 }
