@@ -10,7 +10,7 @@ using shows_buzz_feed.Data;
 namespace shows_buzz_feed.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210508125738_Initial")]
+    [Migration("20210509192748_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,12 +64,20 @@ namespace shows_buzz_feed.Migrations
                     b.Property<int>("Rate")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserSeenFilmId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserSeenFilmId");
 
                     b.ToTable("Ratings");
                 });
 
-            modelBuilder.Entity("shows_buzz_feed.Models.Series", b =>
+            modelBuilder.Entity("shows_buzz_feed.Models.TVShows", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -84,7 +92,7 @@ namespace shows_buzz_feed.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Series");
+                    b.ToTable("TVShows");
                 });
 
             modelBuilder.Entity("shows_buzz_feed.Models.User", b =>
@@ -127,6 +135,17 @@ namespace shows_buzz_feed.Migrations
                     b.ToTable("UserSeenFilms");
                 });
 
+            modelBuilder.Entity("shows_buzz_feed.Models.Rating", b =>
+                {
+                    b.HasOne("shows_buzz_feed.Models.UserSeenFilm", "UserSeenFilm")
+                        .WithMany("Ratings")
+                        .HasForeignKey("UserSeenFilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserSeenFilm");
+                });
+
             modelBuilder.Entity("shows_buzz_feed.Models.UserSeenFilm", b =>
                 {
                     b.HasOne("shows_buzz_feed.Models.Film", "Film")
@@ -154,6 +173,11 @@ namespace shows_buzz_feed.Migrations
             modelBuilder.Entity("shows_buzz_feed.Models.User", b =>
                 {
                     b.Navigation("UserSeenFilms");
+                });
+
+            modelBuilder.Entity("shows_buzz_feed.Models.UserSeenFilm", b =>
+                {
+                    b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618
         }
