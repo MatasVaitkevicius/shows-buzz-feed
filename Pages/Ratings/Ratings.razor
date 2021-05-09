@@ -37,7 +37,7 @@ else
                     <td>@rating.Rate</td>
                 </tr>
             }
-            <tr><button @onclick="@(() => ShowCreateRating())" class="btn btn-info">Create Rating</button></tr>
+            @*<tr><button @onclick="@(() => ShowCreateRating())" class="btn btn-info">Create Rating</button></tr>*@
         </tbody>
     </table>
 }
@@ -52,20 +52,20 @@ else
         ratings = await ratingService.GetRatingsAsync();
     }
 
-    protected async void ShowCreateRating()
-    {
-        var options = new ModalOptions { DisableBackgroundCancel = true };
-        var messageForm = Modal.Show<RatingCreate>("Create Rating", options);
-        var result = await messageForm.Result;
+    //protected async void ShowCreateRating()
+    //{
+    //    var options = new ModalOptions { DisableBackgroundCancel = true };
+    //    var messageForm = Modal.Show<RatingCreate>("Create Rating", options);
+    //    var result = await messageForm.Result;
 
-        if (!result.Cancelled)
-        {
-            _message = result.Data?.ToString() ?? string.Empty;
-            await Load();
-            StateHasChanged();
-        }
+    //    if (!result.Cancelled)
+    //    {
+    //        _message = result.Data?.ToString() ?? string.Empty;
+    //        await Load();
+    //        StateHasChanged();
+    //    }
 
-    }
+    //}
 
     protected async Task Load()
     {

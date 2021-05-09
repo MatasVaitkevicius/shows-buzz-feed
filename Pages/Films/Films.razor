@@ -4,13 +4,13 @@
 @using shows_buzz_feed.Services
 @using shows_buzz_feed.Mappings.Film
 @using shows_buzz_feed.Mappings.UserSeenFilm
+@using shows_buzz_feed.Helpers
 @using Microsoft.JSInterop
 @using Blazored.Modal.Services
 @inject FilmService filmService
 @inject UserSeenFilmService userSeenFilmService
 @inject IJSRuntime jsRuntime
 @inject IModalService Modal
-@using shows_buzz_feed.Pages.Films
 
 <h1>Films List</h1>
 
@@ -37,16 +37,19 @@ else
         <tbody>
             @foreach (var film in films.Films)
             {
-                <tr>
-                    <td>@film.Name</td>
-                    <td>@film.Length</td>
-                    <td>@film.Budget$</td>
-                    <td>@film.ReleaseYear</td>
-                    <td>@film.Genre</td>
-                    <td><button @onclick="@(() => ShowEditFilm(film.Id))" class="btn btn-warning">Edit</button></td>
-                    <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>
+            <tr>
+                <td>@film.Name</td>
+                <td>@film.Length</td>
+                <td>@film.Budget$</td>
+                <td>@film.ReleaseYear</td>
+                <td>@film.Genre</td>
+                <td><button @onclick="@(() => ShowEditFilm(film.Id))" class="btn btn-warning">Edit</button></td>
+                <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>
+                @if (!userSeenFilms.UserSeenFilms.Any(e => e.FilmId == film.Id && e.UserId == UserHelper.UserId))
+                {
                     <td><button @onclick="@(() => MovieSeen(film.Id))" class="btn btn-danger">Seen</button></td>
-                </tr>
+                }
+            </tr>
             }
             <tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>
         </tbody>
@@ -55,12 +58,14 @@ else
 
 @code {
     private FilmListViewModel films;
+    private UserSeenFilmListViewModel userSeenFilms;
 
     string _message;
 
     protected override async Task OnInitializedAsync()
     {
         films = await filmService.GetFilmsAsync();
+        userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
     }
 
     protected async Task Delete(int id)
@@ -79,7 +84,7 @@ else
         CreateUserSeenFilmCommand create = new CreateUserSeenFilmCommand()
         {
             FilmId = filmId,
-            UserId = 1
+            UserId = UserHelper.UserId
         };
 
         var result = await userSeenFilmService.InsertUserSeenFilmAsync(create);
@@ -131,5 +136,6 @@ else
     protected async Task Load()
     {
         films = await filmService.GetFilmsAsync();
+        userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
     }
 }
