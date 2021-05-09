@@ -67,7 +67,7 @@ namespace shows_buzz_feed.Migrations
                     b.ToTable("Ratings");
                 });
 
-            modelBuilder.Entity("shows_buzz_feed.Models.Series", b =>
+            modelBuilder.Entity("shows_buzz_feed.Models.TVShows", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -82,7 +82,7 @@ namespace shows_buzz_feed.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Series");
+                    b.ToTable("TVShows");
                 });
 
             modelBuilder.Entity("shows_buzz_feed.Models.User", b =>

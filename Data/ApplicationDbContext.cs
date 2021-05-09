@@ -13,7 +13,7 @@ namespace shows_buzz_feed.Data
         { 
         }
         public DbSet<Film> Films { get; set; }
-        public DbSet<Series> Series { get; set; }
+        public DbSet<TVShows> TVShows { get; set; }
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserSeenFilm> UserSeenFilms { get; set; }
@@ -24,7 +24,7 @@ namespace shows_buzz_feed.Data
             builder.Entity<Film>()
                 .Property(e => e.Id)
                 .ValueGeneratedOnAdd();
-            builder.Entity<Series>()
+            builder.Entity<TVShows>()
                 .Property(e => e.Id)
                 .ValueGeneratedOnAdd();
             builder.Entity<Rating>()

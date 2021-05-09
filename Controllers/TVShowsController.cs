@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using shows_buzz_feed.Data;
 using shows_buzz_feed.Helpers;
-using shows_buzz_feed.Mappings.Series;
+using shows_buzz_feed.Mappings.TVShows;
 using shows_buzz_feed.Models;
 using System;
 using System.Collections.Generic;
@@ -15,24 +15,24 @@ namespace shows_buzz_feed.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SeriesController : ControllerBase
+    public class TVShowsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        public SeriesController(ApplicationDbContext context, IMapper mapper)
+        public TVShowsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<SeriesListViewModel> GetAllSeries()
+        public async Task<TVShowsListViewModel> GetAllTVShows()
         {
             try
             {
-                var model = new SeriesListViewModel()
+                var model = new TVShowsListViewModel()
                 {
-                    Series = _mapper.Map<List<SeriesViewModel>>(_context.Series)
+                    TVShows = _mapper.Map<List<TVShowsViewModel>>(_context.TVShows)
                 };
 
                 return model;
@@ -44,9 +44,9 @@ namespace shows_buzz_feed.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<SeriesViewModel> GetSeries(int id)
+        public async Task<TVShowsViewModel> GetTVShows(int id)
         {
-            var dto = _mapper.Map<SeriesViewModel>(await _context.Series.FirstOrDefaultAsync(e => e.Id == id));
+            var dto = _mapper.Map<TVShowsViewModel>(await _context.TVShows.FirstOrDefaultAsync(e => e.Id == id));
 
             return dto;
         }

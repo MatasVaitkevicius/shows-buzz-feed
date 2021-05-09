@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 
-namespace shows_buzz_feed.Mappings.Series
+namespace shows_buzz_feed.Mappings.TVShows
 {
-    public class SeriesProfile : Profile
+    public class TVShowsProfile : Profile
     {
-        public SeriesProfile()
+        public TVShowsProfile()
         {
-            CreateMap<Models.Series, SeriesViewModel>()
+            CreateMap<Models.TVShows, TVShowsViewModel>()
                 .ForMember(pDTO => pDTO.Id, opt => opt.MapFrom(e => e.Id))
                 .ForMember(pDTO => pDTO.Name, opt => opt.MapFrom(e => e.Name))
                 .ForMember(pDTO => pDTO.Genre, opt => opt.MapFrom(e => e.Genre));

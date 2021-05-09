@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace shows_buzz_feed.Mappings.Series
+namespace shows_buzz_feed.Mappings.TVShows
 {
-    public class SeriesViewModel
+    public class TVShowsViewModel
     {
         [Key]
         public int Id { get; set; }
