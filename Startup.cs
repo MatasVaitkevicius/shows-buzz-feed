@@ -37,7 +37,7 @@ namespace shows_buzz_feed
             try
             {
                 services.AddSingleton<FilmService>();
-                services.AddSingleton<SeriesService>();
+                services.AddSingleton<TVShowsService>();
                 services.AddSingleton<RatingService>();
                 services.AddSingleton<UserService>();
                 services.AddSingleton<UserSeenFilmService>();

@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace shows_buzz_feed.Models
 {
-    public class Series
+    public class TVShows
     {
         [Key]
         public int Id { get; set; }

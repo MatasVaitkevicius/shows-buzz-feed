@@ -40,7 +40,7 @@ namespace shows_buzz_feed.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Series",
+                name: "TVShows",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -50,7 +50,7 @@ namespace shows_buzz_feed.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Series", x => x.Id);
+                    table.PrimaryKey("PK_TVShows", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -110,7 +110,7 @@ namespace shows_buzz_feed.Migrations
                 name: "Ratings");
 
             migrationBuilder.DropTable(
-                name: "Series");
+                name: "TVShows");
 
             migrationBuilder.DropTable(
                 name: "UserSeenFilms");
