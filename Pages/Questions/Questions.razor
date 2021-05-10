@@ -1,0 +1,108 @@
+﻿@page "/questions"
+@*@using shows_buzz_feed.Data
+    @using shows_buzz_feed.Question
+    @using shows_buzz_feed.Mappings.Question
+    @using Microsoft.JSInterop
+    @using Blazored.Modal.Question
+    @inject QuestionService QuestionService
+    @inject IJSRuntime jsRuntime
+    @inject IModalService Modal
+    @using shows_buzz_feed.Pages*@
+
+@using shows_buzz_feed.Data
+@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.Question
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services
+@inject QuestionService QuestionService
+@inject IJSRuntime jsRuntime
+@inject IModalService Modal
+@using shows_buzz_feed.Pages.Questions
+
+<h3>Question</h3>
+
+<p>Here you can see all the questions</p>
+
+@if (questions == null)
+{
+<p><em>Loading...</em></p> }
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Content</th>
+            <th>Question No</th>
+            @*<th>Edit</th>
+                <th>Delete</th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Question in questions.Questions)
+        {
+        <tr>
+            <td>@Question.Content</td>
+            <td>@Question.Question_No</td>
+            <td><button @onclick="@(() => ShowEditQuestion(Question.Id))" class="btn btn-warning">Edit</button></td>
+            <td><button @onclick="@(() => Delete(Question.Id))" class="btn btn-danger">Delete</button></td>
+        </tr>
+}
+        <tr><button @onclick="@(() => ShowCreateQuestion())" class="btn btn-info">Create Question</button></tr>
+    </tbody>
+</table>}
+
+@code { private QuestionListViewModel questions;
+
+    string _message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        questions = await QuestionService.GetQuestionsAsync();
+    }
+
+    protected async Task Delete(int id)
+    {
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
+        if (confirmed)
+        {
+            await QuestionService.DeleteQuestionAsync(id);
+            await Load();
+            StateHasChanged();
+        }
+    }
+
+    protected async void ShowCreateQuestion()
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+        var messageForm = Modal.Show<QuestionCreate>("Create Question", options);
+        var result = await messageForm.Result;
+
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
+
+    }
+
+    protected async Task ShowEditQuestion(int questionId)
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(QuestionEdit.questionId), questionId);
+        var messageForm = Modal.Show<QuestionEdit>("Edit Question", parameters, options);
+        var result = await messageForm.Result;
+
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
+    }
+
+    protected async Task Load()
+    {
+        questions = await QuestionService.GetQuestionsAsync();
+    } }

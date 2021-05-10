@@ -39,7 +39,7 @@ namespace shows_buzz_feed.Services
         {
             try
             {
-                var json = await client.GetStringAsync($"{baseUrl}/api/TVShows/{id}");
+                var json = await client.GetStringAsync($"{baseUrl}/api/tvshows/{id}");
                 return JsonConvert.DeserializeObject<TVShowsViewModel>(json);
             }
             catch (Exception e)

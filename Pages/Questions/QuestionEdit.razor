@@ -1,0 +1,87 @@
+﻿@using shows_buzz_feed.Mappings.Question
+@using shows_buzz_feed.Services
+@inject QuestionService service
+@inject IToastService toastService
+
+@if (question != null)
+{
+<div class="simple-form">
+    <EditForm Model="@question" OnValidSubmit="@UpdateQuestion">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="question_No">Question Number</label>
+            <InputNumber TValue="int" id="question_No" min="0" class="form-control" @bind-Value="@question.Question_No" />
+        </div>
+
+        <div class="form-group">
+            <label for="row_No">Row Number</label>
+            <InputNumber TValue="int" id="row_No" min="0" class="form-control" @bind-Value="@question.Row_No" />
+        </div>
+
+        <div class="form-group">
+            <label for="content">Content</label>
+            <InputText id="content" required="required" class="form-control" @bind-Value="@question.Content" />
+        </div>
+
+        @*<div class="form-group">
+            <label for="releaseYear">Release Year</label>
+            <InputNumber TValue="int" id="releaseYear" min="0" class="form-control" @bind-Value="@question.ReleaseYear" />
+        </div>
+
+        <div class="form-group">
+            <label for="releaseYear">Genre</label>
+            <InputSelect @bind-Value="@question.Genre">
+                <option>Comedy</option>
+                <option>Thriller</option>
+                <option>Action</option>
+                <option>Drama</option>
+            </InputSelect>
+        </div>*@
+
+        <div class="form-group">
+            <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+        </div>
+    </EditForm>
+    <button @onclick="BlazoredModal.CancelAsync" class="btn btn-secondary">Cancel</button>
+</div> }
+            else
+            {
+<div class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+</div>}
+
+@code { [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
+            [Parameter] public int questionId { get; set; }
+
+            QuestionViewModel question { get; set; }
+
+            protected override async Task OnInitializedAsync()
+            {
+                question = await service.GetQuestionAsync(questionId);
+            }
+
+            protected async Task UpdateQuestion()
+            {
+                UpdateQuestionCommand update = new UpdateQuestionCommand()
+                {
+                    Id = questionId,
+                    Content = question.Content,
+                    Question_No = question.Question_No,
+                    Row_No = question.Row_No,
+                };
+
+                var result = await service.UpdateQuestionAsync(update);
+                //if (result.IsSuccessStatusCode)
+                //{
+                //    toastService.ShowSuccess("Question has been updated successfully");
+                //}
+                //else
+                //{
+                //    toastService.ShowError("Question has not been updated");
+                //}
+
+                await BlazoredModal.CloseAsync(ModalResult.Ok<QuestionViewModel>(question));
+            } }
