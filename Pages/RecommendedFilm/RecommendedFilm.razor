@@ -1,0 +1,168 @@
+﻿@page "/recommendedFilm"
+
+@using shows_buzz_feed.Data
+@using shows_buzz_feed.Helpers
+@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.Film
+@using shows_buzz_feed.Mappings.UserSeenFilm
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services
+@inject FilmService filmService
+@inject UserSeenFilmService userSeenFilmService
+@inject IJSRuntime jsRuntime
+@inject IModalService Modal
+@using shows_buzz_feed.Pages.RecommendedFilm
+
+<h1>Recommended film</h1>
+
+<p>Here you can see recommended film, based on your watched movies</p>
+
+@if (films == null)
+{
+    <p><em>Empty...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Length Minutes</th>
+                <th>Budget $</th>
+                <th>Release Year</th>
+                <th>Genre</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var film in films.Films)
+            {
+                <tr>
+                    <td>@film.Name</td>
+                    <td>@film.Length</td>
+                    <td>@film.Budget$</td>
+                    <td>@film.ReleaseYear</td>
+                    <td>@film.Genre</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private FilmListViewModel films;
+    private FilmViewModel film;
+    string _message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // film =
+        films = await filmService.GetFilmsAsync();
+
+    }
+
+
+    //protected async Task Delete(int id)
+    //{
+    //    bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
+    //    if (confirmed)
+    //    {
+    //        await filmService.DeleteFilmAsync(id);
+    //        await Load();
+    //        StateHasChanged();
+    //    }
+    //}
+
+    //protected async Task MovieSeen(int filmId)
+    //{
+    //    CreateUserSeenFilmCommand create = new CreateUserSeenFilmCommand()
+    //    {
+    //        FilmId = filmId,
+    //        UserId = 1
+    //    };
+
+    //    var result = await userSeenFilmService.InsertUserSeenFilmAsync(create);
+
+    //    //if (result > 0)
+    //    //    {
+    //    //        toastService.ShowSuccess("Route has been added successfully");
+    //    //        await loadItems();
+    //    //        tab = Tab.Overview;
+    //    //        StateHasChanged();
+    //    //    }
+    //    //    else
+    //    //    {
+    //    //        toastService.ShowError("Route has not been added");
+    //    //    }
+    //}
+
+    //protected async void ShowCreateFilm()
+    //{
+    //    var options = new ModalOptions { DisableBackgroundCancel = true };
+    //    var messageForm = Modal.Show<FilmCreate>("Create Film", options);
+    //    var result = await messageForm.Result;
+
+    //    if (!result.Cancelled)
+    //    {
+    //        _message = result.Data?.ToString() ?? string.Empty;
+    //        await Load();
+    //        StateHasChanged();
+    //    }
+
+    //}
+
+    //protected async Task ShowEditFilm(int filmId)
+    //{
+    //    var options = new ModalOptions { DisableBackgroundCancel = true };
+    //    var parameters = new ModalParameters();
+    //    parameters.Add(nameof(FilmEdit.filmId), filmId);
+    //    var messageForm = Modal.Show<FilmEdit>("Edit Film", parameters, options);
+    //    var result = await messageForm.Result;
+
+    //    if (!result.Cancelled)
+    //    {
+    //        _message = result.Data?.ToString() ?? string.Empty;
+    //        await Load();
+    //        StateHasChanged();
+    //    }
+    //}
+
+    protected async Task GetRecommendedFilm()
+    {
+        FilmListViewModel films = await filmService.GetFilmsAsync();
+        UserSeenFilmListViewModel seenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
+
+
+        //var nameGroup = names.GroupBy(x => x);
+        //var maxCount = nameGroup.Max(g => g.Count());
+        //var mostCommons = nameGroup.Where(x => x.Count() == maxCount).Select(x => x.Key).ToArray();
+
+
+    }
+
+   // protected async Task<string> FindFavoriteGenre(UserSeenFilmListViewModel seenFilms)
+    //{
+    //    var grouped = seenFilms.UserSeenFilms.GroupBy(item => item.);
+        //var nameGroup = seenFilms.UserSeenFilms.GroupBy(x => x);
+        //var maxCount = nameGroup.Max(g => g.Count());
+        //var mostCommons = nameGroup.Where(x => x.Count() == maxCount).Select(x => x.Key).ToArray();
+    //}
+
+    public bool checkIfAllFilmsAreSeen(FilmListViewModel films, UserSeenFilmListViewModel seenFilms)
+    {
+        if (films.Films.Count == seenFilms.UserSeenFilms.Count)
+        {
+            return true;
+        }
+        else return false;
+    }
+
+
+    protected async Task Load()
+    {
+        films = await filmService.GetFilmsAsync();
+        FilmListViewModel seenFilms = await filmService.GetFilmsAsync();
+    }
+
+}
