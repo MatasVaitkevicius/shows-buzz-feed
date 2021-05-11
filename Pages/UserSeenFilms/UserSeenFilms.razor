@@ -8,6 +8,7 @@
 @using Blazored.Modal.Services
 @using shows_buzz_feed.Helpers
 @inject UserSeenFilmService userSeenFilmService
+@inject RatingService ratingService
 @inject IJSRuntime jsRuntime
 @inject IModalService Modal
 @using shows_buzz_feed.Pages.Ratings
@@ -43,46 +44,53 @@ else
     <td>@userSeenFilm.UserId</td>
     <td>@userSeenFilm.UserName</td>
     <td>@userSeenFilm.CreatedAt</td>
+    @if (!ratings.Ratings.Any(e => e.UserSeenFilmId == userSeenFilm.Id && e.UserId == UserHelper.UserId))
+    {
+<td><button @onclick="@(() => ShowRatingCreate(userSeenFilm.Id))" class="btn btn-warning">Rate Movie</button></td>
+}
 
-    <td><button @onclick="@(() => ShowRatingCreate(userSeenFilm.Id))" class="btn btn-warning">Rate Movie</button></td>
     <td><button @onclick="@(() => Delete(userSeenFilm.Id))" class="btn btn-danger">Delete</button></td>
-</tr>}
+</tr>
+}
         @*<tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>*@
     </tbody>
 </table>}
 
 @code { private UserSeenFilmListViewModel userSeenFilms;
-            string _message;
+    private RatingListViewModel ratings;
+    string _message;
 
-            protected override async Task OnInitializedAsync()
-            {
-                userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
-            }
+    protected override async Task OnInitializedAsync()
+    {
+        userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
+        ratings = await ratingService.GetAllRatingsAsync(UserHelper.UserId);
+    }
 
 
-            protected async Task ShowRatingCreate(int userSeenFilmId)
-            {
-                var options = new ModalOptions { DisableBackgroundCancel = true };
+    protected async Task ShowRatingCreate(int userSeenFilmId)
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
 
-                var parameters = new ModalParameters();
-                parameters.Add(nameof(RatingCreate.userSeenFilmId), userSeenFilmId);
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(RatingCreate.userSeenFilmId), userSeenFilmId);
 
-                var messageForm = Modal.Show<RatingCreate>("Rate Moview", parameters, options);
-                var result = await messageForm.Result;
-            }
+        var messageForm = Modal.Show<RatingCreate>("Rate Moview", parameters, options);
+        var result = await messageForm.Result;
+    }
 
-            protected async Task Delete(int id)
-            {
-                bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
-                if (confirmed)
-                {
-                    await userSeenFilmService.DeleteUserSeenFilm(id);
-                    await Load();
-                    StateHasChanged();
-                }
-            }
+    protected async Task Delete(int id)
+    {
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
+        if (confirmed)
+        {
+            await userSeenFilmService.DeleteUserSeenFilm(id);
+            await Load();
+            StateHasChanged();
+        }
+    }
 
-            protected async Task Load()
-            {
-                userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
-            } }
+    protected async Task Load()
+    {
+        userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
+        ratings = await ratingService.GetAllRatingsAsync(UserHelper.UserId);
+    } }
