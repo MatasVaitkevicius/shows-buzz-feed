@@ -24,14 +24,14 @@ namespace shows_buzz_feed.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<RatingListViewModel> GetAllRatings()
+        [HttpGet("all/{id}")]
+        public async Task<RatingListViewModel> GetAllRatings(int id)
         {
             try
             {
                 var model = new RatingListViewModel()
                 {
-                    Ratings = _mapper.Map<List<RatingViewModel>>(_context.Ratings)
+                    Ratings = _mapper.Map<List<RatingViewModel>>(_context.Ratings.Where(e => e.UserId == id).Include(e => e.UserSeenFilm).Include(e => e.UserSeenFilm.Film))
                 };
 
                 return model;
@@ -58,6 +58,8 @@ namespace shows_buzz_feed.Controllers
                 DateRated = DateTime.Today,
                 Comment = command.Comment,
                 Rate = command.Rate,
+                UserId  = command.UserId,
+                UserSeenFilmId = command.UserSeenFilmId,
             };
 
             _context.Ratings.Add(entity);

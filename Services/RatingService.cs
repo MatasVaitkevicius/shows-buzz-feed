@@ -34,6 +34,20 @@ namespace shows_buzz_feed.Services
             }
         }
 
+        public async Task<RatingListViewModel> GetAllRatingsAsync(int id)
+        {
+            try
+            {
+                var json = await client.GetStringAsync($"{baseUrl}/api/ratings/all/{id}");
+                return JsonConvert.DeserializeObject<RatingListViewModel>(json);
+            }
+            catch (Exception e)
+            {
+                var message = e.InnerException.Message;
+                throw;
+            }
+        }
+
         public async Task<RatingViewModel> GetRatingAsync(int id)
         {
             try

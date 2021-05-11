@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using shows_buzz_feed.Data;
@@ -63,6 +64,22 @@ namespace shows_buzz_feed.Controllers
             {
                 throw;
             }
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _context.UserSeenFilms.FirstOrDefaultAsync(e => e.Id == id);
+
+            if (result != null)
+            {
+                _context.Remove(result);
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
         }
     }
 }
