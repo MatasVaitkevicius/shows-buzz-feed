@@ -12,5 +12,6 @@ namespace shows_buzz_feed.Mappings.Question
         public int Question_No { get; set; }
 
         public int Row_No { get; set; }
+        public int QuizId { get; set; }
     }
 }

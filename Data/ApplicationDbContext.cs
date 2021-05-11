@@ -18,6 +18,8 @@ namespace shows_buzz_feed.Data
         public DbSet<User> Users { get; set; }
         public DbSet<UserSeenFilm> UserSeenFilms { get; set; }
         public DbSet<Question> Question { get; set; }
+        public DbSet<Answer> Answer { get; set; }
+        public DbSet<Quiz> Quiz { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -52,6 +54,19 @@ namespace shows_buzz_feed.Data
             builder.Entity<Question>()
                 .Property(e => e.Id)
                 .ValueGeneratedOnAdd();
+            builder.Entity<Answer>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            builder.Entity<Answer>()
+                .HasOne(e => e.Question)
+                .WithMany(i => i.Answers)
+                .HasForeignKey(e => e.QuestionId);
+            builder.Entity<Quiz>()
+                .Property(e => e.Id);
+            builder.Entity<Question>()
+                .HasOne(e => e.Quiz)
+                .WithMany(i => i.Questions)
+                .HasForeignKey(e => e.QuizId);
         }
     }
 }
