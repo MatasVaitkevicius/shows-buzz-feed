@@ -11,6 +11,7 @@
 @inject UserSeenFilmService userSeenFilmService
 @inject IJSRuntime jsRuntime
 @inject IModalService Modal
+@using shows_buzz_feed.Pages.Films;
 
 <h1>Films List</h1>
 
@@ -18,124 +19,121 @@
 
 @if (films == null)
 {
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Length Minutes</th>
-                <th>Budget $</th>
-                <th>Release Year</th>
-                <th>Genre</th>
-                <th>Edit</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var film in films.Films)
+<p><em>Loading...</em></p> }
+            else
             {
-            <tr>
-                <td>@film.Name</td>
-                <td>@film.Length</td>
-                <td>@film.Budget$</td>
-                <td>@film.ReleaseYear</td>
-                <td>@film.Genre</td>
-                <td><button @onclick="@(() => ShowEditFilm(film.Id))" class="btn btn-warning">Edit</button></td>
-                <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>
-                @if (!userSeenFilms.UserSeenFilms.Any(e => e.FilmId == film.Id && e.UserId == UserHelper.UserId))
-                {
-                    <td><button @onclick="@(() => MovieSeen(film.Id))" class="btn btn-danger">Seen</button></td>
-                }
-            </tr>
-            }
-            <tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>
-        </tbody>
-    </table>
-}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Length Minutes</th>
+            <th>Budget $</th>
+            <th>Release Year</th>
+            <th>Genre</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var film in films.Films)
+        {
+<tr>
+    <td>@film.Name</td>
+    <td>@film.Length</td>
+    <td>@film.Budget$</td>
+    <td>@film.ReleaseYear</td>
+    <td>@film.Genre</td>
+    <td><button @onclick="@(() => ShowEditFilm(film.Id))" class="btn btn-warning">Edit</button></td>
+    <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>
+    @if (!userSeenFilms.UserSeenFilms.Any(e => e.FilmId == film.Id && e.UserId == UserHelper.UserId))
+    {
+<td><button @onclick="@(() => MovieSeen(film.Id))" class="btn btn-danger">Seen</button></td>}
+</tr>}
+        <tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>
+    </tbody>
+</table>}
 
-@code {
+@code { 
     private FilmListViewModel films;
     private UserSeenFilmListViewModel userSeenFilms;
 
     string _message;
 
-    protected override async Task OnInitializedAsync()
-    {
-        films = await filmService.GetFilmsAsync();
-        userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
+            protected override async Task OnInitializedAsync()
+            {
+                films = await filmService.GetFilmsAsync();
+                userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
+            }
+
+            protected async Task Delete(int id)
+            {
+                bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
+                if (confirmed)
+                {
+                    await filmService.DeleteFilmAsync(id);
+                    await Load();
+                    StateHasChanged();
+                }
+            }
+
+            protected async Task MovieSeen(int filmId)
+            {
+                CreateUserSeenFilmCommand create = new CreateUserSeenFilmCommand()
+                {
+                    FilmId = filmId,
+                    UserId = UserHelper.UserId
+                };
+
+                var result = await userSeenFilmService.InsertUserSeenFilmAsync(create);
+
+                //if (result > 0)
+                //    {
+                //        toastService.ShowSuccess("Route has been added successfully");
+                //        await loadItems();
+                //        tab = Tab.Overview;
+                //        StateHasChanged();
+                //    }
+                //    else
+                //    {
+                //        toastService.ShowError("Route has not been added");
+                //    }
+            }
+
+            protected async void ShowCreateFilm()
+            {
+                var options = new ModalOptions { DisableBackgroundCancel = true };
+                var messageForm = Modal.Show<FilmCreate>("Create Film", options);
+                var result = await messageForm.Result;
+
+                if (!result.Cancelled)
+                {
+                    _message = result.Data?.ToString() ?? string.Empty;
+                    await Load();
+                    StateHasChanged();
+                }
+
+            }
+
+            protected async Task ShowEditFilm(int filmId)
+            {
+                var options = new ModalOptions { DisableBackgroundCancel = true };
+                var parameters = new ModalParameters();
+                parameters.Add(nameof(FilmEdit.filmId), filmId);
+                var messageForm = Modal.Show<FilmEdit>("Edit Film", parameters, options);
+                var result = await messageForm.Result;
+
+                if (!result.Cancelled)
+                {
+                    _message = result.Data?.ToString() ?? string.Empty;
+                    await Load();
+                    StateHasChanged();
+                }
+            }
+
+            protected async Task Load()
+            {
+                films = await filmService.GetFilmsAsync();
+                userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
+            } 
     }
 
-    protected async Task Delete(int id)
-    {
-        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
-        if (confirmed)
-        {
-            await filmService.DeleteFilmAsync(id);
-            await Load();
-            StateHasChanged();
-        }
-    }
-
-    protected async Task MovieSeen(int filmId)
-    {
-        CreateUserSeenFilmCommand create = new CreateUserSeenFilmCommand()
-        {
-            FilmId = filmId,
-            UserId = UserHelper.UserId
-        };
-
-        var result = await userSeenFilmService.InsertUserSeenFilmAsync(create);
-
-        //if (result > 0)
-        //    {
-        //        toastService.ShowSuccess("Route has been added successfully");
-        //        await loadItems();
-        //        tab = Tab.Overview;
-        //        StateHasChanged();
-        //    }
-        //    else
-        //    {
-        //        toastService.ShowError("Route has not been added");
-        //    }
-    }
-
-    protected async void ShowCreateFilm()
-    {
-        var options = new ModalOptions { DisableBackgroundCancel = true };
-        var messageForm = Modal.Show<FilmCreate>("Create Film", options);
-        var result = await messageForm.Result;
-
-        if (!result.Cancelled)
-        {
-            _message = result.Data?.ToString() ?? string.Empty;
-            await Load();
-            StateHasChanged();
-        }
-
-    }
-
-    protected async Task ShowEditFilm(int filmId)
-    {
-        var options = new ModalOptions { DisableBackgroundCancel = true };
-        var parameters = new ModalParameters();
-        parameters.Add(nameof(FilmEdit.filmId), filmId);
-        var messageForm = Modal.Show<FilmEdit>("Edit Film", parameters, options);
-        var result = await messageForm.Result;
-
-        if (!result.Cancelled)
-        {
-            _message = result.Data?.ToString() ?? string.Empty;
-            await Load();
-            StateHasChanged();
-        }
-    }
-
-    protected async Task Load()
-    {
-        films = await filmService.GetFilmsAsync();
-        userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
-    }
-}

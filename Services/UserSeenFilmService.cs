@@ -46,5 +46,10 @@ namespace shows_buzz_feed.Services
                 throw;
             }
         }
+
+        public async Task<HttpResponseMessage> DeleteUserSeenFilm (int id)
+        {
+            return await client.DeleteAsync($"{baseUrl}/api/UserSeenFilms/{id}");
+        }
     }
 }

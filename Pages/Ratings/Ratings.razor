@@ -9,6 +9,7 @@
 @inject IJSRuntime jsRuntime
 @inject IModalService Modal
 @using shows_buzz_feed.Pages.Ratings
+@using shows_buzz_feed.Helpers
 
 <h1>Ratings List</h1>
 
@@ -16,59 +17,58 @@
 
 @if (ratings == null)
 {
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Comment</th>
-                <th>DateRated</th>
-                <th>Rate</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var rating in ratings.Ratings)
+<p><em>Loading...</em></p> }
+            else
             {
-                <tr>
-                    <td>@rating.Comment</td>
-                    <td>@rating.DateRated</td>
-                    <td>@rating.Rate</td>
-                </tr>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Comment</th>
+            <th>DateRated</th>
+            <th>Rate</th>
+            <th>User Seen Film Id</th>
+            <th>Film Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var rating in ratings.Ratings)
+        {
+        <tr>
+            <td>@rating.Comment</td>
+            <td>@rating.DateRated</td>
+            <td>@rating.Rate</td>
+            <td>@rating.UserSeenFilmId</td>
+            <td>@rating.FilmName</td>
+        </tr>}
+        @*<tr><button @onclick="@(() => ShowCreateRating())" class="btn btn-info">Create Rating</button></tr>*@
+    </tbody>
+</table>}
+
+@code { private RatingListViewModel ratings;
+
+            string _message;
+
+            protected override async Task OnInitializedAsync()
+            {
+                ratings = await ratingService.GetAllRatingsAsync(UserHelper.UserId);
             }
-            @*<tr><button @onclick="@(() => ShowCreateRating())" class="btn btn-info">Create Rating</button></tr>*@
-        </tbody>
-    </table>
-}
 
-@code {
-    private RatingListViewModel ratings;
+            //protected async void ShowCreateRating()
+            //{
+            //    var options = new ModalOptions { DisableBackgroundCancel = true };
+            //    var messageForm = Modal.Show<RatingCreate>("Create Rating", options);
+            //    var result = await messageForm.Result;
 
-    string _message;
+            //    if (!result.Cancelled)
+            //    {
+            //        _message = result.Data?.ToString() ?? string.Empty;
+            //        await Load();
+            //        StateHasChanged();
+            //    }
 
-    protected override async Task OnInitializedAsync()
-    {
-        ratings = await ratingService.GetRatingsAsync();
-    }
+            //}
 
-    //protected async void ShowCreateRating()
-    //{
-    //    var options = new ModalOptions { DisableBackgroundCancel = true };
-    //    var messageForm = Modal.Show<RatingCreate>("Create Rating", options);
-    //    var result = await messageForm.Result;
-
-    //    if (!result.Cancelled)
-    //    {
-    //        _message = result.Data?.ToString() ?? string.Empty;
-    //        await Load();
-    //        StateHasChanged();
-    //    }
-
-    //}
-
-    protected async Task Load()
-    {
-        ratings = await ratingService.GetRatingsAsync();
-    }
-}
+            protected async Task Load()
+            {
+                ratings = await ratingService.GetAllRatingsAsync(UserHelper.UserId);
+            } }
