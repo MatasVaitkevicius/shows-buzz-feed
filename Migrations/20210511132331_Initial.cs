@@ -25,18 +25,19 @@ namespace shows_buzz_feed.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Question",
+                name: "Quiz",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Question_No = table.Column<int>(type: "int", nullable: false),
-                    Row_No = table.Column<int>(type: "int", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimesCompleted = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Question", x => x.Id);
+                    table.PrimaryKey("PK_Quiz", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,6 +68,28 @@ namespace shows_buzz_feed.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Question",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Question_No = table.Column<int>(type: "int", nullable: false),
+                    Row_No = table.Column<int>(type: "int", nullable: false),
+                    QuizId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Question", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Question_Quiz_QuizId",
+                        column: x => x.QuizId,
+                        principalTable: "Quiz",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserSeenFilms",
                 columns: table => new
                 {
@@ -89,6 +112,27 @@ namespace shows_buzz_feed.Migrations
                         name: "FK_UserSeenFilms_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Answer",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Weight = table.Column<int>(type: "int", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    QuestionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Answer", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Answer_Question_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Question",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -117,6 +161,16 @@ namespace shows_buzz_feed.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Answer_QuestionId",
+                table: "Answer",
+                column: "QuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Question_QuizId",
+                table: "Question",
+                column: "QuizId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Ratings_UserSeenFilmId",
                 table: "Ratings",
                 column: "UserSeenFilmId");
@@ -135,7 +189,7 @@ namespace shows_buzz_feed.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Question");
+                name: "Answer");
 
             migrationBuilder.DropTable(
                 name: "Ratings");
@@ -144,7 +198,13 @@ namespace shows_buzz_feed.Migrations
                 name: "TVShows");
 
             migrationBuilder.DropTable(
+                name: "Question");
+
+            migrationBuilder.DropTable(
                 name: "UserSeenFilms");
+
+            migrationBuilder.DropTable(
+                name: "Quiz");
 
             migrationBuilder.DropTable(
                 name: "Films");

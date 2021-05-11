@@ -1,0 +1,141 @@
+﻿@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.Answer
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services
+@inject AnswerService AnswerService
+@inject IJSRuntime JsRuntime
+@inject IToastService toastService
+@inject IModalService Modal
+@inject IJSRuntime jsRuntime
+
+<div style="border-radius: 5px;background-color: #f2f2f2;padding: 20px;">
+    <EditForm Model="@answerModel" OnValidSubmit="@SubmitAnswer">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            @if (answers == null)
+            {
+<p><em>Loading...</em></p> }
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Answer</th>
+            <th>Weight</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var answer in answers.Answers)
+        {
+<tr>
+    <td>@answer.Text</td>
+    <td>@answer.Weight</td>
+    <td><button @onclick="@(() => Delete(answer.Id))" class="btn btn-danger">Delete</button></td>
+    @*<td>@answer.Budget$</td>
+                <td>@answer.ReleaseYear</td>
+                <td>@answer.Genre</td>
+                <td><button @onclick="@(() => ShowEditFilm(answer.Id))" class="btn btn-warning">Edit</button></td>
+                <td><button @onclick="@(() => Delete(answer.Id))" class="btn btn-danger">Delete</button></td>
+                @if (!userSeenFilms.UserSeenFilms.Any(e => e.FilmId == answer.Id && e.UserId == UserHelper.UserId))
+                {
+        <td><button @onclick="@(() => MovieSeen(film.Id))" class="btn btn-danger">Seen</button></td>
+        }*@
+</tr>
+}
+        @*<tr><button @onclick="@(() => ShowCreateAnswer())" class="btn btn-secondary">Create Answer</button></tr>*@
+    </tbody>
+</table>}
+
+        </div>
+
+        <div class="form-group">
+            <label for="name">Answer Content</label>
+            <InputText id="name" required="required" class="form-control" @bind-Value="@answerModel.Text" />
+        </div>
+
+        <div class="form-group">
+            <label for="length">Weight</label>
+            <InputNumber TValue="int" id="length" min="0" class="form-control" @bind-Value="@answerModel.Weight" />
+        </div>
+
+        <div class="form-group">
+            <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+        </div>
+    </EditForm>
+    <button @onclick="BlazoredModal.CancelAsync" class="btn btn-secondary">Cancel</button>
+</div>
+
+@code { [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
+    [Parameter] public int questionId { get; set; }
+
+    AnswerViewModel answerModel = new AnswerViewModel();
+
+    void BackgroundCancelDisabled()
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+    }
+
+    protected async Task Delete(int id)
+    {
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
+        if (confirmed)
+        {
+            await AnswerService.DeleteAnswerAsync(id);
+            await Load();
+            StateHasChanged();
+        }
+    }
+
+    protected async Task AnswerAdd(int answerId)
+    {
+        int test = questionId;
+
+        AnswerService.GetAnswersAsync();
+        //CreateUserSeenFilmCommand create = new CreateUserSeenFilmCommand()
+        //{
+        //    FilmId = filmId,
+        //    UserId = UserHelper.UserId
+        //};
+
+        //var result = await userSeenFilmService.InsertUserSeenFilmAsync(create);
+    }
+
+    private AnswerListViewModel answers;
+    string _message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        answers = await AnswerService.GetAllAnswerAsync(questionId);
+    }
+
+    protected async Task Load()
+    {
+        answers = await AnswerService.GetAllAnswerAsync(questionId);
+    }
+
+    private async Task SubmitAnswer(EditContext answer)
+    {
+        CreateAnswerCommand create = new CreateAnswerCommand()
+        {
+            Text = answerModel.Text,
+            Weight = answerModel.Weight,
+            QuestionId = questionId,
+        };
+
+        var result = await AnswerService.InsertAnswerAsync(create);
+
+        //if (result > 0)
+        //{
+        //    toastService.ShowSuccess("Answer has been added successfully");
+        //    StateHasChanged();
+        //}
+        //else
+        //{
+        //    toastService.ShowError("Answer has not been added");
+        //}
+
+        await BlazoredModal.CloseAsync(ModalResult.Ok<AnswerViewModel>(answerModel));
+    } }

@@ -1,0 +1,77 @@
+﻿@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.Quiz
+@using shows_buzz_feed.Mappings.Answer
+@using shows_buzz_feed.Helpers
+@using shows_buzz_feed.Pages.Quiz
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services
+@inject QuizService quizService
+@inject AnswerService AnswerService
+@inject IJSRuntime JsRuntime
+@inject IToastService toastService
+@inject IModalService Modal
+
+<div style="border-radius: 5px;background-color: #f2f2f2;padding: 20px;">
+    <EditForm Model="@quizModel" OnValidSubmit="@SubmitQuiz">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="name">Content</label>
+            <InputText id="name" required="required" class="form-control" @bind-Value="@quizModel.Name" />
+        </div>
+        <div class="form-group">
+            @*<button @onclick="@(() => SubmitQuiz(EditContext(quizModel)))" class="btn btn-primary">Submit</button>*@
+            <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+        </div>
+    </EditForm>
+    <button @onclick="BlazoredModal.CancelAsync" class="btn btn-secondary">Cancel</button>
+</div>
+
+@code { [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
+    QuizViewModel quizModel = new QuizViewModel();
+
+    void BackgroundCancelDisabled()
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+    }
+
+    private AnswerListViewModel answers;
+    string _message;
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    answers = await AnswerService.GetAnswersAsync();
+    //}
+
+    //protected async Task Load()
+    //{
+    //    answers = await AnswerService.GetAnswersAsync();
+    //}
+
+    private async Task SubmitQuiz(EditContext quiz)
+    {
+
+        CreateQuizCommand create = new CreateQuizCommand()
+        {
+            Name = quizModel.Name,
+            TimesCompleted = 0,
+            UserId = UserHelper.UserId,
+            DateCreated = DateTime.Now,
+        };
+
+        var result = await quizService.InsertQuizAsync(create);
+
+        //if (result > 0)
+        //{
+        //    toastService.ShowSuccess("Quiz has been added successfully");
+        //    StateHasChanged();
+        //}
+        //else
+        //{
+        //    toastService.ShowError("Quiz has not been added");
+        //}
+
+        await BlazoredModal.CloseAsync(ModalResult.Ok<QuizViewModel>(quizModel));
+    } }
