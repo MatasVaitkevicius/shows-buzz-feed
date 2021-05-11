@@ -1,5 +1,6 @@
 ﻿@using shows_buzz_feed.Services
 @using shows_buzz_feed.Mappings.Question
+
 @using shows_buzz_feed.Mappings.Answer
 @using shows_buzz_feed.Mappings.Quiz
 @using shows_buzz_feed.Pages.Questions
@@ -9,6 +10,7 @@
 @inject AnswerService AnswerService
 @inject QuizService QuizService
 @inject IJSRuntime jsRuntime
+
 @inject IToastService toastService
 @inject IModalService Modal
 
@@ -36,6 +38,7 @@
             <label for="content">Content</label>
             <InputText id="content" required="required" class="form-control" @bind-Value="@questionModel.Content" />
         </div>
+
 
         <div class="form-group">
             <label for="quiz">Quiz</label>

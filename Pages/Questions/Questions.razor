@@ -42,6 +42,7 @@ else
     <tbody>
         @foreach (var Question in questions.Questions)
         {
+
 <tr>
     <td>@Question.Content</td>
     <td>@Question.Question_No</td>
@@ -67,6 +68,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         questions = await QuestionService.GetQuestionsAsync();
+
     }
 
     protected async Task Delete(int id)

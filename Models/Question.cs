@@ -21,15 +21,9 @@ namespace shows_buzz_feed.Models
 
 		public Quiz Quiz { get; set; }
 		//public string QuizName { get; set; }
+		//Klausimynas Quiz { get; set; }
 
-		public int QuizId { get; set; }
-
-		public Question()
-		{
-			Answers = new List<Answer>();
-		}
-
-		public List<Answer> Answers { get; set; }
+		//Answer Answer { get; set; }
 
 	}
 	
