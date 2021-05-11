@@ -21,29 +21,6 @@ namespace shows_buzz_feed.Migrations
                 .HasAnnotation("ProductVersion", "5.0.5")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("shows_buzz_feed.Models.Answer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Weight")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuestionId");
-
-                    b.ToTable("Answer");
-                });
-
             modelBuilder.Entity("shows_buzz_feed.Models.Film", b =>
                 {
                     b.Property<int>("Id")
@@ -84,41 +61,12 @@ namespace shows_buzz_feed.Migrations
                     b.Property<int>("Question_No")
                         .HasColumnType("int");
 
-                    b.Property<int>("QuizId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Row_No")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuizId");
-
                     b.ToTable("Question");
-                });
-
-            modelBuilder.Entity("shows_buzz_feed.Models.Quiz", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TimesCompleted")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Quiz");
                 });
 
             modelBuilder.Entity("shows_buzz_feed.Models.Rating", b =>
@@ -208,28 +156,6 @@ namespace shows_buzz_feed.Migrations
                     b.ToTable("UserSeenFilms");
                 });
 
-            modelBuilder.Entity("shows_buzz_feed.Models.Answer", b =>
-                {
-                    b.HasOne("shows_buzz_feed.Models.Question", "Question")
-                        .WithMany("Answers")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-                });
-
-            modelBuilder.Entity("shows_buzz_feed.Models.Question", b =>
-                {
-                    b.HasOne("shows_buzz_feed.Models.Quiz", "Quiz")
-                        .WithMany("Questions")
-                        .HasForeignKey("QuizId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Quiz");
-                });
-
             modelBuilder.Entity("shows_buzz_feed.Models.Rating", b =>
                 {
                     b.HasOne("shows_buzz_feed.Models.UserSeenFilm", "UserSeenFilm")
@@ -263,16 +189,6 @@ namespace shows_buzz_feed.Migrations
             modelBuilder.Entity("shows_buzz_feed.Models.Film", b =>
                 {
                     b.Navigation("UserSeenFilms");
-                });
-
-            modelBuilder.Entity("shows_buzz_feed.Models.Question", b =>
-                {
-                    b.Navigation("Answers");
-                });
-
-            modelBuilder.Entity("shows_buzz_feed.Models.Quiz", b =>
-                {
-                    b.Navigation("Questions");
                 });
 
             modelBuilder.Entity("shows_buzz_feed.Models.User", b =>
