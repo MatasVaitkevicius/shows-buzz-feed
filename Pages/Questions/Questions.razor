@@ -43,6 +43,7 @@ else
         <tr>
             <td>@Question.Content</td>
             <td>@Question.Question_No</td>
+            <td><button @onclick="@(() => ShowCreateAnswer(Question.Id))" class="btn btn-dark">Answers</button></td>
             <td><button @onclick="@(() => ShowEditQuestion(Question.Id))" class="btn btn-warning">Edit</button></td>
             <td><button @onclick="@(() => Delete(Question.Id))" class="btn btn-danger">Delete</button></td>
         </tr>
@@ -51,7 +52,8 @@ else
     </tbody>
 </table>}
 
-@code { private QuestionListViewModel questions;
+@code { 
+    private QuestionListViewModel questions;
 
     string _message;
 
@@ -69,6 +71,27 @@ else
             await Load();
             StateHasChanged();
         }
+    }
+
+    protected async void ShowCreateAnswer(int questionId)
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(AnswerCreate.questionId), questionId);
+
+        var messageForm = Modal.Show<AnswerCreate>("Create Answer", parameters, options);
+        var result = await messageForm.Result;
+
+
+
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
+
     }
 
     protected async void ShowCreateQuestion()

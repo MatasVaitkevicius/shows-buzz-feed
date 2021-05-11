@@ -1,8 +1,11 @@
 ﻿@using shows_buzz_feed.Services
 @using shows_buzz_feed.Mappings.Question
+@using shows_buzz_feed.Mappings.Answer
+@using shows_buzz_feed.Pages.Questions
 @using Microsoft.JSInterop
 @using Blazored.Modal.Services
 @inject QuestionService questionService
+@inject AnswerService AnswerService
 @inject IJSRuntime JsRuntime
 @inject IToastService toastService
 @inject IModalService Modal
@@ -26,24 +29,10 @@
             <label for="content">Content</label>
             <InputText id="content" required="required" class="form-control" @bind-Value="@questionModel.Content" />
         </div>
-
-        @*<div class="form-group">
-            <label for="releaseYear">Release Year</label>
-            <InputNumber TValue="int" id="releaseYear" min="0" class="form-control" @bind-Value="@questionModel.ReleaseYear" />
-        </div>
-
-        <div class="form-group">
-            <label for="releaseYear">Genre</label>
-            <InputSelect @bind-Value="@questionModel.Genre">
-                <option>Comedy</option>
-                <option>Thriller</option>
-                <option>Action</option>
-                <option>Drama</option>
-            </InputSelect>
-        </div>*@
-        <div class="form-group">
-            <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
-        </div>
+    <div class="form-group">
+        @*<button @onclick="@(() => SubmitQuestion(EditContext(questionModel)))" class="btn btn-primary">Submit</button>*@
+        <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+    </div>
     </EditForm>
     <button @onclick="BlazoredModal.CancelAsync" class="btn btn-secondary">Cancel</button>
 </div>
@@ -57,12 +46,36 @@
         var options = new ModalOptions { DisableBackgroundCancel = true };
     }
 
+    private AnswerListViewModel answers;
+    string _message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        answers = await AnswerService.GetAnswersAsync();
+    }
+
+    protected async Task Load()
+    {
+        answers = await AnswerService.GetAnswersAsync();
+    }
+
+    protected async void ShowCreateAnswer()
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+        var messageForm = Modal.Show<AnswerCreate>("Create Answer", options);
+        var result = await messageForm.Result;
+
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
+
+    }
+
     private async Task SubmitQuestion(EditContext question)
     {
-        //if (questionModel.Genre == null)
-        //{
-        //    questionModel.Genre = "Comedy";
-        //}
         CreateQuestionCommand create = new CreateQuestionCommand()
         {
             Question_No = questionModel.Question_No,
