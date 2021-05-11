@@ -15,6 +15,7 @@
 @using Microsoft.JSInterop
 @using Blazored.Modal.Services
 @inject QuestionService QuestionService
+@inject QuizService QuizService
 @inject IJSRuntime jsRuntime
 @inject IModalService Modal
 @using shows_buzz_feed.Pages.Questions
@@ -33,6 +34,7 @@ else
         <tr>
             <th>Content</th>
             <th>Question No</th>
+            <th>Quiz</th>
             @*<th>Edit</th>
                 <th>Delete</th>*@
         </tr>
@@ -40,22 +42,27 @@ else
     <tbody>
         @foreach (var Question in questions.Questions)
         {
-        <tr>
-            <td>@Question.Content</td>
-            <td>@Question.Question_No</td>
-            <td><button @onclick="@(() => ShowCreateAnswer(Question.Id))" class="btn btn-dark">Answers</button></td>
-            <td><button @onclick="@(() => ShowEditQuestion(Question.Id))" class="btn btn-warning">Edit</button></td>
-            <td><button @onclick="@(() => Delete(Question.Id))" class="btn btn-danger">Delete</button></td>
-        </tr>
-}
+<tr>
+    <td>@Question.Content</td>
+    <td>@Question.Question_No</td>
+    <td>@Question.QuizId</td>
+    <td><button @onclick="@(() => ShowCreateAnswer(Question.Id))" class="btn btn-dark">Answers</button></td>
+    <td><button @onclick="@(() => ShowEditQuestion(Question.Id))" class="btn btn-warning">Edit</button></td>
+    <td><button @onclick="@(() => Delete(Question.Id))" class="btn btn-danger">Delete</button></td>
+</tr>}
         <tr><button @onclick="@(() => ShowCreateQuestion())" class="btn btn-info">Create Question</button></tr>
     </tbody>
 </table>}
 
-@code { 
-    private QuestionListViewModel questions;
+@code { private QuestionListViewModel questions;
 
     string _message;
+
+    //private async string GetQuiz(string id)
+    //{
+    //    var obj = await QuizService.GetQuizAsync(int.Parse(id));
+    //    return obj.Name;
+    //}
 
     protected override async Task OnInitializedAsync()
     {

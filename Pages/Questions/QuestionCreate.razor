@@ -1,12 +1,14 @@
 ﻿@using shows_buzz_feed.Services
 @using shows_buzz_feed.Mappings.Question
 @using shows_buzz_feed.Mappings.Answer
+@using shows_buzz_feed.Mappings.Quiz
 @using shows_buzz_feed.Pages.Questions
 @using Microsoft.JSInterop
 @using Blazored.Modal.Services
 @inject QuestionService questionService
 @inject AnswerService AnswerService
-@inject IJSRuntime JsRuntime
+@inject QuizService QuizService
+@inject IJSRuntime jsRuntime
 @inject IToastService toastService
 @inject IModalService Modal
 
@@ -25,14 +27,39 @@
             <InputNumber TValue="int" id="row_no" min="0" class="form-control" @bind-Value="@questionModel.Row_No" />
         </div>
 
+        @*<div class="form-group">
+                <label for="quiz_id">QuizId</label>
+                <InputNumber TValue="int" id="quiz_id" min="0" class="form-control" @bind-Value="@questionModel.QuizId" />
+            </div>*@
+
         <div class="form-group">
             <label for="content">Content</label>
             <InputText id="content" required="required" class="form-control" @bind-Value="@questionModel.Content" />
         </div>
-    <div class="form-group">
-        @*<button @onclick="@(() => SubmitQuestion(EditContext(questionModel)))" class="btn btn-primary">Submit</button>*@
-        <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
-    </div>
+
+        <div class="form-group">
+            <label for="quiz">Quiz</label>
+            @if (quizes == null)
+            {
+        <p><em>Loading...</em></p> }
+            else
+            {
+                
+        <InputSelect @bind-Value="@questionModel.QuizId">
+            <option value="--">--</option>
+            @foreach (var quiz in quizes.Quizes)
+            {
+                <option value=@quiz.Id>@quiz.Name</option>
+        @*<option>@quiz.Id</option>*@
+        }
+        </InputSelect>
+            }
+                    </div>
+
+        <div class="form-group">
+            @*<button @onclick="@(() => SubmitQuestion(EditContext(questionModel)))" class="btn btn-primary">Submit</button>*@
+            <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+        </div>
     </EditForm>
     <button @onclick="BlazoredModal.CancelAsync" class="btn btn-secondary">Cancel</button>
 </div>
@@ -47,15 +74,18 @@
     }
 
     private AnswerListViewModel answers;
+    private QuizListViewModel quizes;
     string _message;
 
     protected override async Task OnInitializedAsync()
     {
+        quizes = await QuizService.GetQuizesAsync();
         answers = await AnswerService.GetAnswersAsync();
     }
 
     protected async Task Load()
     {
+        quizes = await QuizService.GetQuizesAsync();
         answers = await AnswerService.GetAnswersAsync();
     }
 
@@ -76,11 +106,20 @@
 
     private async Task SubmitQuestion(EditContext question)
     {
+        if (questionModel.QuizId == null)
+        {
+            await jsRuntime.InvokeAsync<bool>("confirm", "No quiz selected");
+            return;
+        }
+
+        var temp = await QuizService.GetQuizAsync(int.Parse(questionModel.QuizId));
         CreateQuestionCommand create = new CreateQuestionCommand()
         {
             Question_No = questionModel.Question_No,
             Row_No = questionModel.Row_No,
             Content = questionModel.Content,
+            QuizId = int.Parse(questionModel.QuizId),
+            //Quiz = temp.Name,
         };
 
         var result = await questionService.InsertQuestionAsync(create);
@@ -96,4 +135,6 @@
         //}
 
         await BlazoredModal.CloseAsync(ModalResult.Ok<QuestionViewModel>(questionModel));
+
+        //ShowCreateAnswer();
     } }

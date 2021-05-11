@@ -20,6 +20,7 @@ namespace shows_buzz_feed.Models
 		public int Row_No { get; set; }
 
 		public Quiz Quiz { get; set; }
+		//public string QuizName { get; set; }
 
 		public int QuizId { get; set; }
 
