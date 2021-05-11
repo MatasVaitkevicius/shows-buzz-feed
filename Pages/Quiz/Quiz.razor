@@ -1,0 +1,100 @@
+﻿@page "/quizes"
+
+@using shows_buzz_feed.Data
+@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.Quiz
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services
+@inject QuizService QuizService
+@inject IJSRuntime jsRuntime
+@inject IModalService Modal
+@using shows_buzz_feed.Pages.Quiz
+
+<h3>Question</h3>
+
+<p>Here you can see all the Quizes</p>
+
+@if (quizes == null)
+{
+<p><em>Loading...</em></p> }
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Times Completed</th>
+            <th>Created</th>
+            @*<th>Edit</th>
+        <th>Delete</th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Quiz in quizes.Quizes)
+        {
+        <tr>
+            <td>@Quiz.Name</td>
+            <td>@Quiz.TimesCompleted</td>
+            <td>@Quiz.DateCreated</td>
+            <td><button @onclick="@(() => ShowEditQuiz(Quiz.Id))" class="btn btn-warning">Edit</button></td>
+            <td><button @onclick="@(() => Delete(Quiz.Id))" class="btn btn-danger">Delete</button></td>
+        </tr>}
+        <tr><button @onclick="@(() => ShowCreateQuiz())" class="btn btn-info">Create Quiz</button></tr>
+    </tbody>
+</table>}
+
+@code { private QuizListViewModel quizes;
+
+    string _message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        quizes = await QuizService.GetQuizesAsync();
+    }
+
+    protected async Task Delete(int id)
+    {
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
+        if (confirmed)
+        {
+            await QuizService.DeleteQuizAsync(id);
+            await Load();
+            StateHasChanged();
+        }
+    }
+
+    protected async void ShowCreateQuiz()
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+        var messageForm = Modal.Show<QuizCreate>("Create Quiz", options);
+        var result = await messageForm.Result;
+
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
+
+    }
+
+    protected async Task ShowEditQuiz(int questionId)
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(QuizEdit.quizId), questionId);
+        var messageForm = Modal.Show<QuizEdit>("Edit Quiz", parameters, options);
+        var result = await messageForm.Result;
+
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
+    }
+
+    protected async Task Load()
+    {
+        quizes = await QuizService.GetQuizesAsync();
+    } }

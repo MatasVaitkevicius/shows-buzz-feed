@@ -50,8 +50,15 @@ namespace shows_buzz_feed.Services
 
         public async Task<int> InsertQuestionAsync(CreateQuestionCommand command)
         {
-            var result = await client.PostAsync($"{baseUrl}/api/question/", RequestHelper.GetStringContentFromObject(command));
-            return Convert.ToInt32(result.Content.ReadAsStringAsync().Result);
+            try
+            {
+                var result = await client.PostAsync($"{baseUrl}/api/question/", RequestHelper.GetStringContentFromObject(command));
+                return Convert.ToInt32(result.Content.ReadAsStringAsync().Result);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
 
         public async Task<HttpResponseMessage> UpdateQuestionAsync(UpdateQuestionCommand command)

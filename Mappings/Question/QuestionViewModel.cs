@@ -14,10 +14,11 @@ namespace shows_buzz_feed.Mappings.Question
 
 		public int Question_No { get; set; }
 
-		public int Row_No { get; set; }
+        public int Row_No { get; set; }
+        public string QuizId { get; set; }
 
-		//Klausimynas Quiz { get; set; }
+        //Klausimynas Quiz { get; set; }
 
-		//Answer Answer { get; set; }
-	}
+        //Answer Answer { get; set; }
+    }
 }
