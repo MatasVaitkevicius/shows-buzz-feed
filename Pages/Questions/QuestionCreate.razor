@@ -66,6 +66,8 @@
 
 @code { [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
 
+    [Parameter] public int quizId { get; set; }
+
     QuestionViewModel questionModel = new QuestionViewModel();
 
     void BackgroundCancelDisabled()
@@ -112,7 +114,7 @@
             return;
         }
 
-        var temp = await QuizService.GetQuizAsync(int.Parse(questionModel.QuizId));
+        //var temp = await QuizService.GetQuizAsync(int.Parse(questionModel.QuizId));
         CreateQuestionCommand create = new CreateQuestionCommand()
         {
             Question_No = questionModel.Question_No,
