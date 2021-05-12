@@ -26,19 +26,21 @@ else
             <th>Times Completed</th>
             <th>Created</th>
             @*<th>Edit</th>
-        <th>Delete</th>*@
+                <th>Delete</th>*@
         </tr>
     </thead>
     <tbody>
         @foreach (var Quiz in quizes.Quizes)
         {
-        <tr>
-            <td>@Quiz.Name</td>
-            <td>@Quiz.TimesCompleted</td>
-            <td>@Quiz.DateCreated</td>
-            <td><button @onclick="@(() => ShowEditQuiz(Quiz.Id))" class="btn btn-warning">Edit</button></td>
-            <td><button @onclick="@(() => Delete(Quiz.Id))" class="btn btn-danger">Delete</button></td>
-        </tr>}
+<tr>
+    <td>@Quiz.Name</td>
+    <td>@Quiz.TimesCompleted</td>
+    <td>@Quiz.DateCreated</td>
+    <td><button @onclick="@(() => ShowCreateQuestion(Quiz.Id))" class="btn btn-dark">Questions</button></td>
+    <td><button @onclick="@(() => ShowEditQuiz(Quiz.Id))" class="btn btn-warning">Edit</button></td>
+    <td><button @onclick="@(() => Delete(Quiz.Id))" class="btn btn-danger">Delete</button></td>
+</tr>
+}
         <tr><button @onclick="@(() => ShowCreateQuiz())" class="btn btn-info">Create Quiz</button></tr>
     </tbody>
 </table>}
@@ -94,8 +96,28 @@ else
         }
     }
 
+    protected async void ShowCreateQuestion(int questionId)
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(QuestionCreate.quizId), questionId);
+
+        var messageForm = Modal.Show<QuestionCreate>("Create Question", parameters, options);
+        var result = await messageForm.Result;
+
+
+
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
+
+    }
+
     protected async Task Load()
     {
         quizes = await QuizService.GetQuizesAsync();
-    } 
-}
+    } }

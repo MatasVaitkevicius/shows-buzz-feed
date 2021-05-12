@@ -79,5 +79,18 @@ namespace shows_buzz_feed.Services
         {
             return await client.DeleteAsync($"{baseUrl}/api/question/{id}");
         }
+
+        public async Task<QuestionListViewModel> GetAllQuestionAsync(int id)
+        {
+            try
+            {
+                var json = await client.GetStringAsync($"{baseUrl}/api/question/quiz-question/{id}");
+                return JsonConvert.DeserializeObject<QuestionListViewModel>(json);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
     }
 }
