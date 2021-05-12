@@ -52,6 +52,9 @@ namespace shows_buzz_feed.Migrations
                     b.Property<double>("Budget")
                         .HasColumnType("float");
 
+                    b.Property<string>("Director")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Genre")
                         .HasColumnType("nvarchar(max)");
 

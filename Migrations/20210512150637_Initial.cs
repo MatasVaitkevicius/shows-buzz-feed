@@ -17,7 +17,8 @@ namespace shows_buzz_feed.Migrations
                     Budget = table.Column<double>(type: "float", nullable: false),
                     ReleaseYear = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Genre = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Genre = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Director = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

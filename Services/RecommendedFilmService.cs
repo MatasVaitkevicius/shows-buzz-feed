@@ -79,10 +79,20 @@ namespace shows_buzz_feed.Services
                 throw;
             }
 
+            FilmListViewModel oldFilms = null;
+            FilmListViewModel newFilms = null;
+            oldFilms.Films = films.Films.Where(x => x.ReleaseYear <= DateTime.Now.Year).ToList();
+            newFilms.Films = films.Films.Where(x => x.ReleaseYear > DateTime.Now.Year).ToList();
+            bool fakeValue = checkIfAllFilmsAreSeen(oldFilms, userSeenFilms);
+            //List<string> favoriteGenre = findFavoriteGenre(userSeenFilms, films);
+            //List<int> favoriteYears = findFavoriteYears(userSeenFilms, films);
+            //List<string> favoriteDirectors = findFavoriteDirector(userSeenFilms, films);
+           // FilmListViewModel moviesWithFavoriteGenre = findMoviesWithFavoriteGenre(favoriteGenre,films);
+           // FilmListViewModel moviesWithFavoriteDirector = findMoviesWithFavoriteGenre(favoriteDirectors, films);
+           // FilmListViewModel moviesWithFavoriteYears = findMoviesWithFavoriteYears(favoriteYears, films);
+            //FilmListViewModel foundMovies = CombineFoundMovies(moviesWithFavoriteGenre, moviesWithFavoriteDirector, moviesWithFavoriteYears);
 
-            bool fakeValue = checkIfAllFilmsAreSeen(films, userSeenFilms);
-            List<string> favoriteGenre = findFavoriteGenre(userSeenFilms, films);
-            List<int> favoriteYears = findFavoriteYears(userSeenFilms, films);
+
 
 
             return films;
@@ -101,7 +111,7 @@ namespace shows_buzz_feed.Services
         {
             //List<string> favoriteGenres = null;
 
-            UserSeenFilmListViewModel userSeenFilmsWithGenre;
+            UserSeenFilmListViewModel userSeenFilmsWithGenre = null;
             //var commonUsers = userSeenFilms.UserSeenFilms.Select(a => a.FilmId).Intersect(films.Films.Select(b => b.Id));
             var seenFilmsWithGenres = (from objA in films.Films
                           join objB in userSeenFilms.UserSeenFilms on objA.Id equals objB.FilmId
@@ -130,12 +140,24 @@ namespace shows_buzz_feed.Services
 
             return foundFilms;
         }
-        public FilmListViewModel findMoviesWithFavoriteYears(List<string> favoriteYears, FilmListViewModel films)
+        public FilmListViewModel findMoviesWithFavoriteYears(List<int> favoriteYears, FilmListViewModel films)
         {
             FilmListViewModel foundFilms = null;
 
             foundFilms.Films = (from film in films.Films
-                                where favoriteYears.Contains(film.Genre) == true
+                                where favoriteYears.Contains(film.ReleaseYear) == true
+                                select film).ToList();
+
+
+            return foundFilms;
+        }
+
+        public FilmListViewModel findMoviesWithFavoriteDirectors(List<string> favoriteDirectors, FilmListViewModel films)
+        {
+            FilmListViewModel foundFilms = null;
+
+            foundFilms.Films = (from film in films.Films
+                                where favoriteDirectors.Contains(film.Genre) == true
                                 select film).ToList();
 
 
@@ -144,7 +166,7 @@ namespace shows_buzz_feed.Services
 
         public List<int> findFavoriteYears(UserSeenFilmListViewModel userSeenFilms, FilmListViewModel films)
         {
-            UserSeenFilmListViewModel userSeenFilmsWithGenre;
+            UserSeenFilmListViewModel userSeenFilmsWithGenre = null;
             //var commonUsers = userSeenFilms.UserSeenFilms.Select(a => a.FilmId).Intersect(films.Films.Select(b => b.Id));
             var seenFilmsWithGenres = (from objA in films.Films
                                        join objB in userSeenFilms.UserSeenFilms on objA.Id equals objB.FilmId
@@ -159,6 +181,46 @@ namespace shows_buzz_feed.Services
                     .ToList();
             return favoriteYears;
         }
+        public List<string> findFavoriteDirector(UserSeenFilmListViewModel userSeenFilms, FilmListViewModel films)
+        {
+            //List<string> favoriteGenres = null;
 
+            UserSeenFilmListViewModel userSeenFilmsWithDirector;
+            //var commonUsers = userSeenFilms.UserSeenFilms.Select(a => a.FilmId).Intersect(films.Films.Select(b => b.Id));
+            var seenFilmsWithDirectors = (from objA in films.Films
+                                       join objB in userSeenFilms.UserSeenFilms on objA.Id equals objB.FilmId
+                                       select objA/*or objB*/).ToList();
+
+            var pairs = seenFilmsWithDirectors.GroupBy(value => value.Director).OrderByDescending(group => group.Count());
+
+            int modeCount = pairs.First().Count();
+
+            List<string> favoriteDirectors = pairs.Where(pair => pair.Count() == modeCount)
+                    .Select(pair => pair.Key)
+                    .ToList();
+
+
+            return favoriteDirectors;
+        }
+
+        public FilmListViewModel CombineFoundMovies(FilmListViewModel moviesWithFavoriteGenre, FilmListViewModel moviesWithFavoriteDirector, FilmListViewModel moviesWithFavoriteYears)
+        {
+            FilmListViewModel result = null;
+            result.Films = (moviesWithFavoriteGenre.Films.Concat(moviesWithFavoriteDirector.Films)).ToList().Concat(moviesWithFavoriteYears.Films).ToList();
+            return result;
+        }
+
+        public FilmListViewModel RemoveAlreadySeenMovies(FilmListViewModel potentiallyRecommendedFilms, UserSeenFilmListViewModel seenMovies) {
+
+            FilmListViewModel result = null;
+            result.Films = potentiallyRecommendedFilms.Films.Where(film => seenMovies.UserSeenFilms.All(seenFilm => film.Id!=seenFilm.FilmId)).ToList();
+            return result;
+        }
+        public FilmViewModel findMostFrequentMovies(FilmListViewModel films)
+        {
+            FilmViewModel film = null;
+            film = films.Films.GroupBy(value => value.Id).OrderByDescending(group => group.Count()).SelectMany(group => group).First();
+            return film;
+        }
     }
 }

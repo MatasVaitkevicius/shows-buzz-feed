@@ -30,6 +30,7 @@
             <th>Budget $</th>
             <th>Release Year</th>
             <th>Genre</th>
+            <th>Director</th>
             <th>Edit</th>
             <th>Delete</th>
         </tr>
@@ -37,18 +38,20 @@
     <tbody>
         @foreach (var film in films.Films)
         {
-<tr>
-    <td>@film.Name</td>
-    <td>@film.Length</td>
-    <td>@film.Budget$</td>
-    <td>@film.ReleaseYear</td>
-    <td>@film.Genre</td>
-    <td><button @onclick="@(() => ShowEditFilm(film.Id))" class="btn btn-warning">Edit</button></td>
-    <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>
-    @if (!userSeenFilms.UserSeenFilms.Any(e => e.FilmId == film.Id && e.UserId == UserHelper.UserId))
-    {
-<td><button @onclick="@(() => MovieSeen(film.Id))" class="btn btn-danger">Seen</button></td>}
-</tr>}
+        <tr>
+            <td>@film.Name</td>
+            <td>@film.Length</td>
+            <td>@film.Budget$</td>
+            <td>@film.ReleaseYear</td>
+            <td>@film.Genre</td>
+            <td>@film.Director</td>
+            <td><button @onclick="@(() => ShowEditFilm(film.Id))" class="btn btn-warning">Edit</button></td>
+            <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>
+            @if (!userSeenFilms.UserSeenFilms.Any(e => e.FilmId == film.Id && e.UserId == UserHelper.UserId))
+            {
+                <td><button @onclick="@(() => MovieSeen(film.Id))" class="btn btn-danger">Seen</button></td>
+}
+        </tr>}
         <tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>
     </tbody>
 </table>}
