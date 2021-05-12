@@ -12,5 +12,6 @@ namespace shows_buzz_feed.Mappings.Film
         public int ReleaseYear { get; set; }
         public string Name { get; set; }
         public string Genre { get; set; }
+        public string Director { get; set; }
     }
 }

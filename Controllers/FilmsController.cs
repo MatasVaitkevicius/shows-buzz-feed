@@ -61,6 +61,7 @@ namespace shows_buzz_feed.Controllers
                 ReleaseYear = command.ReleaseYear,
                 Name = command.Name,
                 Genre = command.Genre,
+                Director=command.Director
             };
 
             _context.Films.Add(entity);
@@ -88,6 +89,7 @@ namespace shows_buzz_feed.Controllers
             entity.ReleaseYear = command.ReleaseYear;
             entity.Name = command.Name;
             entity.Genre = command.Genre;
+            entity.Director = command.Director;
 
             await _context.SaveChangesAsync();
 

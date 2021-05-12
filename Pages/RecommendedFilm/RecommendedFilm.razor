@@ -32,20 +32,20 @@ else
                 <th>Budget $</th>
                 <th>Release Year</th>
                 <th>Genre</th>
-                <th>Edit</th>
-                <th>Delete</th>
+                <th>Director</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var film in films.Films)
             {
-                <tr>
-                    <td>@film.Name</td>
-                    <td>@film.Length</td>
-                    <td>@film.Budget$</td>
-                    <td>@film.ReleaseYear</td>
-                    <td>@film.Genre</td>
-                </tr>
+            <tr>
+                <td>@film.Name</td>
+                <td>@film.Length</td>
+                <td>@film.Budget$</td>
+                <td>@film.ReleaseYear</td>
+                <td>@film.Genre</td>
+                <td>@film.Director</td>
+            </tr>
             }
         </tbody>
     </table>
@@ -166,6 +166,7 @@ else
     {
         films = await filmService.GetFilmsAsync();
         FilmListViewModel seenFilms = await filmService.GetFilmsAsync();
+
     }
 
 }
