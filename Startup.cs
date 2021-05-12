@@ -38,6 +38,8 @@ namespace shows_buzz_feed
             {
                 services.AddSingleton<FilmService>();
                 services.AddSingleton<TVShowsService>();
+                services.AddSingleton<AnswerService>();
+                services.AddSingleton<QuizService>();
                 services.AddSingleton<RatingService>();
                 services.AddSingleton<UserService>();
                 services.AddSingleton<UserSeenFilmService>();

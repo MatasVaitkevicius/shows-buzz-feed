@@ -3,12 +3,16 @@
 @using shows_buzz_feed.Data
 @using shows_buzz_feed.Services
 @using shows_buzz_feed.Mappings.UserSeenFilm
+@using shows_buzz_feed.Mappings.Rating
 @using Microsoft.JSInterop
 @using Blazored.Modal.Services
+@using shows_buzz_feed.Helpers
 @inject UserSeenFilmService userSeenFilmService
+@inject RatingService ratingService
 @inject IJSRuntime jsRuntime
 @inject IModalService Modal
-@using shows_buzz_feed.Pages
+@using shows_buzz_feed.Pages.Ratings
+
 
 <h3>User Seen Films</h3>
 
@@ -33,35 +37,60 @@ else
     <tbody>
         @foreach (var userSeenFilm in userSeenFilms.UserSeenFilms)
         {
-        <tr>
-            <td>@userSeenFilm.Id</td>
-            <td>@userSeenFilm.FilmId</td>
-            <td>@userSeenFilm.FilmName</td>
-            <td>@userSeenFilm.UserId</td>
-            <td>@userSeenFilm.UserName</td>
-            <td>@userSeenFilm.CreatedAt</td>
+<tr>
+    <td>@userSeenFilm.Id</td>
+    <td>@userSeenFilm.FilmId</td>
+    <td>@userSeenFilm.FilmName</td>
+    <td>@userSeenFilm.UserId</td>
+    <td>@userSeenFilm.UserName</td>
+    <td>@userSeenFilm.CreatedAt</td>
+    @if (!ratings.Ratings.Any(e => e.UserSeenFilmId == userSeenFilm.Id && e.UserId == UserHelper.UserId))
+    {
+<td><button @onclick="@(() => ShowRatingCreate(userSeenFilm.Id))" class="btn btn-warning">Rate Movie</button></td>
+}
 
-            @*<td><button @onclick="@(() => ShowEditusers(film.Id))" class="btn btn-warning">Edit</button></td>
-        <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>*@
-        </tr>
+    <td><button @onclick="@(() => Delete(userSeenFilm.Id))" class="btn btn-danger">Delete</button></td>
+</tr>
 }
         @*<tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>*@
     </tbody>
 </table>}
 
 @code { private UserSeenFilmListViewModel userSeenFilms;
-
+    private RatingListViewModel ratings;
     string _message;
-    // WHICH USER FILMS TO SEE
-    int userId = 1;
 
     protected override async Task OnInitializedAsync()
     {
-        userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(userId);
+        userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
+        ratings = await ratingService.GetAllRatingsAsync(UserHelper.UserId);
+    }
+
+
+    protected async Task ShowRatingCreate(int userSeenFilmId)
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(RatingCreate.userSeenFilmId), userSeenFilmId);
+
+        var messageForm = Modal.Show<RatingCreate>("Rate Moview", parameters, options);
+        var result = await messageForm.Result;
+    }
+
+    protected async Task Delete(int id)
+    {
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
+        if (confirmed)
+        {
+            await userSeenFilmService.DeleteUserSeenFilm(id);
+            await Load();
+            StateHasChanged();
+        }
     }
 
     protected async Task Load()
     {
-        userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(userId);
-    }
-}
+        userSeenFilms = await userSeenFilmService.GetUserSeenFilmsAsync(UserHelper.UserId);
+        ratings = await ratingService.GetAllRatingsAsync(UserHelper.UserId);
+    } }

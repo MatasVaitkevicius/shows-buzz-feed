@@ -59,6 +59,7 @@ namespace shows_buzz_feed.Controllers
                 Content = command.Content,
                 Question_No = command.Question_No,
                 Row_No = command.Row_No,
+                QuizId = command.QuizId,
             };
 
             _context.Question.Add(entity);
@@ -83,6 +84,7 @@ namespace shows_buzz_feed.Controllers
             entity.Content = command.Content;
             entity.Question_No = command.Question_No;
             entity.Row_No = command.Row_No;
+            entity.QuizId = command.QuizId;
 
             await _context.SaveChangesAsync();
 
@@ -103,6 +105,24 @@ namespace shows_buzz_feed.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpGet("quiz-question/{id}")]
+        public async Task<QuestionListViewModel> GetAllQuestion(int id)
+        {
+            try
+            {
+                var model = new QuestionListViewModel()
+                {
+                    Questions = _mapper.Map<List<QuestionViewModel>>(_context.Question.Where(e => e.QuizId == id).Include(e => e.Quiz))
+                };
+
+                return model;
+            }
+            catch (Exception e)
+            {
+                throw e.InnerException;
+            }
         }
     }
 }

@@ -1,0 +1,68 @@
+﻿@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.Rating
+@using shows_buzz_feed.Mappings.UserSeenFilm
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services
+@using shows_buzz_feed.Helpers
+@inject RatingService ratingService
+@inject IJSRuntime JsRuntime
+@inject IToastService toastService
+@inject IModalService Modal
+
+<div style="border-radius: 5px;background-color: #f2f2f2;padding: 20px;">
+    <EditForm Model="@ratingModel" OnValidSubmit="@SubmitRating">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="comment">Comment</label>
+            <InputText id="comment" required="required" class="form-control" @bind-Value="@ratingModel.Comment" />
+        </div>
+
+        <div class="form-group">
+            <label for="rate">Rate</label>
+            <InputNumber TValue="int" id="rate" min="0" max="5" class="form-control" @bind-Value="@ratingModel.Rate" />
+        </div>
+
+        <div class="form-group">
+            <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+        </div>
+    </EditForm>
+    <button @onclick="BlazoredModal.CancelAsync" class="btn btn-secondary">Cancel</button>
+</div>
+
+@code { [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
+    RatingViewModel ratingModel = new RatingViewModel();
+    private UserSeenFilmListViewModel userSeenFilms;
+    [Parameter] public int userSeenFilmId { get; set; }
+
+    void BackgroundCancelDisabled()
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+    }
+
+    private async Task SubmitRating(EditContext film)
+    {
+        CreateRatingCommand create = new CreateRatingCommand()
+        {
+            Comment = ratingModel.Comment,
+            Rate = ratingModel.Rate,
+            UserSeenFilmId = userSeenFilmId,
+            UserId = UserHelper.UserId,
+        };
+
+        var result = await ratingService.InsertRatingAsync(create);
+
+        //if (result > 0)
+        //{
+        //    toastService.ShowSuccess("Film has been added successfully");
+        //    StateHasChanged();
+        //}
+        //else
+        //{
+        //    toastService.ShowError("Film has not been added");
+        //}
+
+        await BlazoredModal.CloseAsync(ModalResult.Ok<RatingViewModel>(ratingModel));
+    } }
