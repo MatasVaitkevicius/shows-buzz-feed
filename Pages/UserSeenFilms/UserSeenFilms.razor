@@ -74,8 +74,10 @@ else
         var parameters = new ModalParameters();
         parameters.Add(nameof(RatingCreate.userSeenFilmId), userSeenFilmId);
 
-        var messageForm = Modal.Show<RatingCreate>("Rate Moview", parameters, options);
+        var messageForm = Modal.Show<RatingCreate>("Rate Movie", parameters, options);
         var result = await messageForm.Result;
+        await Load();
+        StateHasChanged();
     }
 
     protected async Task Delete(int id)
