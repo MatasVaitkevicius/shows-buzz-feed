@@ -20,6 +20,7 @@ namespace shows_buzz_feed.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        public string a = "aaaa";
         public RecommendedFilmController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
@@ -43,8 +44,6 @@ namespace shows_buzz_feed.Controllers
                 throw e.InnerException;
             }
         }
-
-
         [HttpGet("{id}")]
         public async Task<UserSeenFilmListViewModel> GetAllUserSeenFilms(int id)
         {
@@ -62,6 +61,37 @@ namespace shows_buzz_feed.Controllers
                 throw e.InnerException;
             }
         }
+
+        //[HttpGet("{id}")]
+        //public async Task<UserSeenFilmListViewModel> GetAllUserSeenFilms(int id)
+        //{
+        //    try
+        //    {
+        //        var model = new UserSeenFilmListViewModel()
+        //        {
+        //            UserSeenFilms = _mapper.Map<List<UserSeenFilmViewModel>>(_context.UserSeenFilms.Where(e => e.UserId == id).Include(e => e.Film).Include(e => e.User))
+        //        };
+
+        //        return model;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw e.InnerException;
+        //    }
+        //}
+        //public async Task<bool> checkIfAllFilmsAreSeen(FilmListViewModel films, UserSeenFilmListViewModel seenFilms)
+        //{
+        //    if (films.Films.Count == seenFilms.UserSeenFilms.Count)
+        //    {
+        //        return true;
+        //    }
+        //    else return false;
+        //}
+        //public async Task<bool> checkIfAllFilmsAreSeen(UserSeenFilmListViewModel seenFilms, UserSeenFilmListViewModel aaaa)
+        //{
+
+        //    return true;
+        //}
 
         //public async Task<bool> CheckIfAllMoviesAreSeen(UserSeenFilmListViewModel seenFilms, FilmListViewModel films)
         //{

@@ -42,6 +42,7 @@ namespace shows_buzz_feed
                 services.AddSingleton<UserService>();
                 services.AddSingleton<UserSeenFilmService>();
                 services.AddSingleton<QuestionService>();
+                services.AddSingleton<RecommendedFilmService>();
             }
             catch (Exception e)
             {

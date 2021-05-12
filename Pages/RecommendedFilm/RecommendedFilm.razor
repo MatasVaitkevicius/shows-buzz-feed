@@ -7,6 +7,7 @@
 @using shows_buzz_feed.Mappings.UserSeenFilm
 @using Microsoft.JSInterop
 @using Blazored.Modal.Services
+@inject RecommendedFilmService recommendedFilmService
 @inject FilmService filmService
 @inject UserSeenFilmService userSeenFilmService
 @inject IJSRuntime jsRuntime
@@ -53,12 +54,14 @@ else
 @code {
     private FilmListViewModel films;
     private FilmViewModel film;
+    int userId = 1;
     string _message;
 
     protected override async Task OnInitializedAsync()
     {
         // film =
-        films = await filmService.GetFilmsAsync();
+        //films = await recommendedFilmService.GetFilmsAsync();
+        films = await recommendedFilmService.GetRecommededFilmAsync(userId);
 
     }
 
@@ -141,22 +144,22 @@ else
 
     }
 
-   // protected async Task<string> FindFavoriteGenre(UserSeenFilmListViewModel seenFilms)
+    // protected async Task<string> FindFavoriteGenre(UserSeenFilmListViewModel seenFilms)
     //{
     //    var grouped = seenFilms.UserSeenFilms.GroupBy(item => item.);
-        //var nameGroup = seenFilms.UserSeenFilms.GroupBy(x => x);
-        //var maxCount = nameGroup.Max(g => g.Count());
-        //var mostCommons = nameGroup.Where(x => x.Count() == maxCount).Select(x => x.Key).ToArray();
+    //var nameGroup = seenFilms.UserSeenFilms.GroupBy(x => x);
+    //var maxCount = nameGroup.Max(g => g.Count());
+    //var mostCommons = nameGroup.Where(x => x.Count() == maxCount).Select(x => x.Key).ToArray();
     //}
 
-    public bool checkIfAllFilmsAreSeen(FilmListViewModel films, UserSeenFilmListViewModel seenFilms)
-    {
-        if (films.Films.Count == seenFilms.UserSeenFilms.Count)
-        {
-            return true;
-        }
-        else return false;
-    }
+    //public bool checkIfAllFilmsAreSeen(FilmListViewModel films, UserSeenFilmListViewModel seenFilms)
+    //{
+    //    if (films.Films.Count == seenFilms.UserSeenFilms.Count)
+    //    {
+    //        return true;
+    //    }
+    //    else return false;
+    //}
 
 
     protected async Task Load()
