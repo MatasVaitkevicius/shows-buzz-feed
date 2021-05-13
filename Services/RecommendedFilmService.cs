@@ -109,6 +109,7 @@ namespace shows_buzz_feed.Services
             else 
             {
                 filmAndMessage.Item2 = "All movies are seen! No unreleased movies to show!";
+                //if (films.)
                 filmAndMessage.Item1 = findUnreleasedRecommendedMovie(newFilms);
             }
             return filmAndMessage;
