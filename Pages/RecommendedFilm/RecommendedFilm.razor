@@ -18,12 +18,18 @@
 
 <p>Here you can see recommended film, based on your watched movies</p>
 
-@if (films == null)
+@if (filmAndMessage.Item2 == null)
 {
-    <p><em>Empty...</em></p>
+    <p><em>Loading...</em></p>
 }
 else
 {
+    @if (filmAndMessage.Item1 == null)
+    {
+        <p><em>@filmAndMessage.Item2</em></p>
+    }
+    else
+    {
     <table class="table">
         <thead>
             <tr>
@@ -36,24 +42,24 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var film in films.Films)
-            {
             <tr>
-                <td>@film.Name</td>
-                <td>@film.Length</td>
-                <td>@film.Budget$</td>
-                <td>@film.ReleaseYear</td>
-                <td>@film.Genre</td>
-                <td>@film.Director</td>
+                <td>@filmAndMessage.Item1.Name</td>
+                <td>@filmAndMessage.Item1.Length</td>
+                <td>@filmAndMessage.Item1.Budget$</td>
+                <td>@filmAndMessage.Item1.ReleaseYear</td>
+                <td>@filmAndMessage.Item1.Genre</td>
+                <td>@filmAndMessage.Item1.Director</td>
             </tr>
-            }
+            
         </tbody>
     </table>
-}
+        }
+    }
 
 @code {
     private FilmListViewModel films;
     private FilmViewModel film;
+    (FilmViewModel, string) filmAndMessage;
     int userId = 1;
     string _message;
 
@@ -61,7 +67,8 @@ else
     {
         // film =
         //films = await recommendedFilmService.GetFilmsAsync();
-        films = await recommendedFilmService.GetRecommededFilmAsync(userId);
+        //(FilmViewModel, string) filmAndMessage;
+        filmAndMessage = await recommendedFilmService.GetRecommededFilmAsync(userId);
 
     }
 

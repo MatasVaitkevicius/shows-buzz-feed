@@ -20,7 +20,6 @@ namespace shows_buzz_feed.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        public string a = "aaaa";
         public RecommendedFilmController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
