@@ -171,8 +171,7 @@ else
 
     protected async Task Load()
     {
-        films = await filmService.GetFilmsAsync();
-        FilmListViewModel seenFilms = await filmService.GetFilmsAsync();
+        filmAndMessage = await recommendedFilmService.GetRecommededFilmAsync(userId);
 
     }
 
