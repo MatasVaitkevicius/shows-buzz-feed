@@ -1,0 +1,71 @@
+﻿@page "/recommendedTvShow"
+
+@using shows_buzz_feed.Data
+@using shows_buzz_feed.Helpers
+@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.TVShows
+@using shows_buzz_feed.Mappings.UserSeenTvShow
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services
+@inject RecommendedTvShowService recommendedTvShowService
+@inject TVShowsService tvShowService
+@inject UserSeenTvShowService userSeenTvShowService
+@inject IJSRuntime jsRuntime
+@inject IModalService Modal
+@using shows_buzz_feed.Pages.RecommendedTvShow
+
+<h1>Recommended tv show</h1>
+
+<p>Here you can see recommended tv show, based on your watching history</p>
+
+@if (tvShowAndMessage.Item2 == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @if (tvShowAndMessage.Item1 == null)
+    {
+        <p><em>@tvShowAndMessage.Item2</em></p>
+    }
+    else
+    {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Release Year</th>
+                <th>Genre</th>
+                <th>Director</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@tvShowAndMessage.Item1.Name</td>
+                <td>@tvShowAndMessage.Item1.ReleaseYear</td>
+                <td>@tvShowAndMessage.Item1.Genre</td>
+                <td>@tvShowAndMessage.Item1.Director</td>
+            </tr>
+            
+        </tbody>
+    </table>
+        }
+    }
+
+@code {
+    (TVShowsViewModel, string) tvShowAndMessage;
+    int userId = 1;
+    string _message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tvShowAndMessage = await recommendedTvShowService.GetRecommededTvShowAsync(userId);
+
+    }
+
+    protected async Task Load()
+    {
+        tvShowAndMessage = await recommendedTvShowService.GetRecommededTvShowAsync(userId);
+    }
+
+}

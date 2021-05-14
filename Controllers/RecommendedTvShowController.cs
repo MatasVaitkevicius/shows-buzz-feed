@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using shows_buzz_feed.Data;
 using shows_buzz_feed.Helpers;
-using shows_buzz_feed.Mappings.Film;
-using shows_buzz_feed.Mappings.UserSeenFilm;
+using shows_buzz_feed.Mappings.TVShows;
+using shows_buzz_feed.Mappings.UserSeenTvShow;
 using shows_buzz_feed.Models;
 using System;
 using System.Collections.Generic;
@@ -16,24 +16,24 @@ namespace shows_buzz_feed.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RecommendedFilmController : ControllerBase
+    public class RecommendedTvShowController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        public RecommendedFilmController(ApplicationDbContext context, IMapper mapper)
+        public RecommendedTvShowController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<FilmListViewModel> GetAllFilms()
+        public async Task<TVShowsListViewModel> GetAllTVShows()
         {
             try
             {
-                var model = new FilmListViewModel()
+                var model = new TVShowsListViewModel()
                 {
-                    Films = _mapper.Map<List<FilmViewModel>>(_context.Films)
+                    TVShows = _mapper.Map<List<TVShowsViewModel>>(_context.TVShows)
                 };
 
                 return model;
@@ -44,15 +44,14 @@ namespace shows_buzz_feed.Controllers
             }
         }
         [HttpGet("{id}")]
-        public async Task<UserSeenFilmListViewModel> GetAllUserSeenFilms(int id)
+        public async Task<UserSeenTvShowListViewModel> GetAllUserSeenTVShows(int id)
         {
             try
             {
-                var model = new UserSeenFilmListViewModel()
+                var model = new UserSeenTvShowListViewModel()
                 {
-                    UserSeenFilms = _mapper.Map<List<UserSeenFilmViewModel>>(_context.UserSeenFilms.Where(e => e.UserId == id).Include(e => e.Film).Include(e => e.User))
+                    UserSeenTvShows = _mapper.Map<List<UserSeenTvShowViewModel>>(_context.UserSeenTvShows.Where(e => e.UserId == id).Include(e => e.TvShow).Include(e => e.User))
                 };
-
                 return model;
             }
             catch (Exception e)
