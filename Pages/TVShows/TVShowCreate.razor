@@ -1,0 +1,81 @@
+﻿@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.TVShows
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services
+@inject TVShowsService tvshowsService
+@inject IJSRuntime JsRuntime
+@inject IToastService toastService
+@inject IModalService Modal
+
+<div style="border-radius: 5px;background-color: #f2f2f2;padding: 20px;">
+    <EditForm Model="@tvShowModel" OnValidSubmit="@SubmitTvShow">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="name">Name</label>
+            <InputText id="name" required="required" class="form-control" @bind-Value="@tvShowModel.Name" />
+        </div>
+
+        <div class="form-group">
+            <label for="director">Director</label>
+            <InputText id="director" required="required" class="form-control" @bind-Value="@tvShowModel.Director" />
+        </div>
+
+        <div class="form-group">
+            <label for="releaseYear">Release Year</label>
+            <InputNumber TValue="int" id="releaseYear" min="0" class="form-control" @bind-Value="@tvShowModel.ReleaseYear" />
+        </div>
+
+        <div class="form-group">
+            <label for="releaseYear">Genre</label>
+            <InputSelect @bind-Value="@tvShowModel.Genre">
+                <option>Comedy</option>
+                <option>Thriller</option>
+                <option>Action</option>
+                <option>Drama</option>
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+        </div>
+    </EditForm>
+        <button @onclick="BlazoredModal.CancelAsync" class="btn btn-secondary">Cancel</button>
+</div>
+
+@code {
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
+    TVShowsViewModel tvShowModel = new TVShowsViewModel();
+
+    void BackgroundCancelDisabled()
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+    }
+
+    private async Task SubmitTvShow(EditContext tvShow)
+    {
+        if (tvShowModel.Genre == null) {
+            tvShowModel.Genre = "Comedy";
+        }
+        CreateTvShowCommand create = new CreateTvShowCommand()
+        {
+            Name = tvShowModel.Name,
+            Genre = tvShowModel.Genre,
+            Director = tvShowModel.Director,
+            ReleaseYear = tvShowModel.ReleaseYear,
+        };
+
+        var result = await tvshowsService.InsertTVShowAsync(create);
+        //if (result > 0)
+        //{
+        //    toastService.ShowSuccess("Film has been added successfully");
+        //    StateHasChanged();
+        //}
+        //else
+        //{
+        //    toastService.ShowError("Film has not been added");
+        //}
+        await BlazoredModal.CloseAsync(ModalResult.Ok<TVShowsViewModel>(tvShowModel));
+    }
+}

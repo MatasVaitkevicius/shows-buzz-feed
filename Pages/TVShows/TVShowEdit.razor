@@ -1,0 +1,86 @@
+﻿@using shows_buzz_feed.Mappings.TVShows
+@using shows_buzz_feed.Services
+@inject TVShowsService service
+@inject IToastService toastService
+
+@if (tvShow != null)
+{
+    <div class="simple-form">
+        <EditForm Model="@tvShow" OnValidSubmit="@UpdateTvShow">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="name">Name</label>
+                <InputText id="name" required="required" class="form-control" @bind-Value="@tvShow.Name" />
+            </div>
+
+            <div class="form-group">
+                <label for="releaseYear">Release Year</label>
+                <InputNumber TValue="int" id="releaseYear" min="0" class="form-control" @bind-Value="@tvShow.ReleaseYear" />
+            </div>
+            <div class="form-group">
+                <label for="director">Director</label>
+                <InputText id="director" required="required" class="form-control" @bind-Value="@tvShow.Director" />
+            </div>
+            <div class="form-group">
+                <label for="releaseYear">Genre</label>
+                <InputSelect @bind-Value="@tvShow.Genre">
+                    <option>Comedy</option>
+                    <option>Thriller</option>
+                    <option>Action</option>
+                    <option>Drama</option>
+                </InputSelect>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" value="Submit" class="btn btn-primary">Submit</button>
+            </div>
+        </EditForm>
+        <button @onclick="BlazoredModal.CancelAsync" class="btn btn-secondary">Cancel</button>
+    </div>
+}
+else
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+}
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; }
+
+    [Parameter] public int tvShowId { get; set; }
+
+    TVShowsViewModel tvShow { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        tvShow = await service.GetTVShowsAsync(tvShowId);
+    }
+
+    protected async Task UpdateTvShow()
+    {
+        UpdateTVShowCommand update = new UpdateTVShowCommand()
+        {
+            Id = tvShowId,
+            Name = tvShow.Name,
+            ReleaseYear = tvShow.ReleaseYear,
+            Genre = tvShow.Genre,
+            Director = tvShow.Director
+        };
+
+        var result = await service.UpdateTVShowAsync(update);
+        //if (result.IsSuccessStatusCode)
+        //{
+        //    toastService.ShowSuccess("Film has been updated successfully");
+        //}
+        //else
+        //{
+        //    toastService.ShowError("Film has not been updated");
+        //}
+
+        await BlazoredModal.CloseAsync(ModalResult.Ok<TVShowsViewModel>(tvShow));
+    }
+}

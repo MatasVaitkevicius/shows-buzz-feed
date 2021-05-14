@@ -158,11 +158,17 @@ namespace shows_buzz_feed.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Director")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Genre")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReleaseYear")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -207,6 +213,31 @@ namespace shows_buzz_feed.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserSeenFilms");
+                });
+
+            modelBuilder.Entity("shows_buzz_feed.Models.UserSeenTvShow", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TvShowId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TvShowId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserSeenTvShows");
                 });
 
             modelBuilder.Entity("shows_buzz_feed.Models.Answer", b =>
@@ -257,6 +288,25 @@ namespace shows_buzz_feed.Migrations
                         .IsRequired();
 
                     b.Navigation("Film");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("shows_buzz_feed.Models.UserSeenTvShow", b =>
+                {
+                    b.HasOne("shows_buzz_feed.Models.TVShows", "TvShow")
+                        .WithMany()
+                        .HasForeignKey("TvShowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("shows_buzz_feed.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TvShow");
 
                     b.Navigation("User");
                 });

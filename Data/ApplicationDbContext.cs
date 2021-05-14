@@ -17,9 +17,11 @@ namespace shows_buzz_feed.Data
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserSeenFilm> UserSeenFilms { get; set; }
+        public DbSet<UserSeenTvShow> UserSeenTvShows { get; set; }
         public DbSet<Question> Question { get; set; }
         public DbSet<Answer> Answer { get; set; }
         public DbSet<Quiz> Quiz { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -47,6 +49,13 @@ namespace shows_buzz_feed.Data
                 .HasOne(e => e.User)
                 .WithMany(i => i.UserSeenFilms)
                 .HasForeignKey(e => e.UserId);
+            builder.Entity<UserSeenTvShow>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            builder.Entity<UserSeenTvShow>()
+                .HasOne(e => e.TvShow);
+            builder.Entity<UserSeenTvShow>()
+                .HasOne(e => e.User);
             builder.Entity<Rating>()
                 .HasOne(e => e.UserSeenFilm)
                 .WithMany(i => i.Ratings)

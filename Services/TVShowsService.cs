@@ -47,5 +47,30 @@ namespace shows_buzz_feed.Services
                 throw;
             }
         }
+
+        public async Task<int> InsertTVShowAsync(CreateTvShowCommand command)
+        {
+            var result = await client.PostAsync($"{baseUrl}/api/tvshows/", RequestHelper.GetStringContentFromObject(command));
+            return Convert.ToInt32(result.Content.ReadAsStringAsync().Result);
+        }
+
+        public async Task<HttpResponseMessage> UpdateTVShowAsync(UpdateTVShowCommand command)
+        {
+            try
+            {
+                return await client.PutAsync($"{baseUrl}/api/tvshows/", RequestHelper.GetStringContentFromObject(command));
+            }
+            catch (Exception e)
+            {
+
+                var message = e.InnerException.Message;
+                throw;
+            }
+        }
+
+        public async Task<HttpResponseMessage> DeleteTVShowAsync(int id)
+        {
+            return await client.DeleteAsync($"{baseUrl}/api/tvshows/{id}");
+        }
     }
 }

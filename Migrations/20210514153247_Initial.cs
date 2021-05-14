@@ -48,7 +48,9 @@ namespace shows_buzz_feed.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Genre = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Genre = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Director = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReleaseYear = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,6 +113,33 @@ namespace shows_buzz_feed.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserSeenFilms_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSeenTvShows",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TvShowId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSeenTvShows", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserSeenTvShows_TVShows_TvShowId",
+                        column: x => x.TvShowId,
+                        principalTable: "TVShows",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserSeenTvShows_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -185,6 +214,16 @@ namespace shows_buzz_feed.Migrations
                 name: "IX_UserSeenFilms_UserId",
                 table: "UserSeenFilms",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSeenTvShows_TvShowId",
+                table: "UserSeenTvShows",
+                column: "TvShowId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSeenTvShows_UserId",
+                table: "UserSeenTvShows",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -196,13 +235,16 @@ namespace shows_buzz_feed.Migrations
                 name: "Ratings");
 
             migrationBuilder.DropTable(
-                name: "TVShows");
+                name: "UserSeenTvShows");
 
             migrationBuilder.DropTable(
                 name: "Question");
 
             migrationBuilder.DropTable(
                 name: "UserSeenFilms");
+
+            migrationBuilder.DropTable(
+                name: "TVShows");
 
             migrationBuilder.DropTable(
                 name: "Quiz");

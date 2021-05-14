@@ -1,0 +1,93 @@
+﻿@page "/UserSeenTvShows"
+
+@using shows_buzz_feed.Data
+@using shows_buzz_feed.Services
+@using shows_buzz_feed.Mappings.UserSeenTvShow
+@using Microsoft.JSInterop
+@using Blazored.Modal.Services
+@using shows_buzz_feed.Helpers
+@inject UserSeenTvShowService userSeenTvShowService
+@inject RatingService ratingService
+@inject IJSRuntime jsRuntime
+@inject IModalService Modal
+@using shows_buzz_feed.Pages.Ratings
+
+
+<h3>User Seen Films</h3>
+
+<p>Here you can see all the User Seen Films</p>
+
+@if (userSeenTvShows == null)
+{
+<p><em>Loading...</em></p> }
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Tv Show Id</th>
+            <th>Tv Show Name</th>
+            <th>User Id</th>
+            <th>User Name</th>
+            <th>Created At</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var userSeenFilm in userSeenTvShows.UserSeenTvShows)
+        {
+<tr>
+    <td>@userSeenFilm.Id</td>
+    <td>@userSeenFilm.TvShowId</td>
+    <td>@userSeenFilm.TvShowName</td>
+    <td>@userSeenFilm.UserId</td>
+    <td>@userSeenFilm.UserName</td>
+    <td>@userSeenFilm.CreatedAt</td>
+    <td><button @onclick="@(() => Delete(userSeenFilm.Id))" class="btn btn-danger">Delete</button></td>
+</tr>
+}
+        @*<tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>*@
+    </tbody>
+</table>}
+
+@code { private UserSeenTvShowListViewModel userSeenTvShows;
+    //private RatingListViewModel ratings;
+    string _message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userSeenTvShows = await userSeenTvShowService.GetUserSeenTvShowAsync(UserHelper.UserId);
+        // ratings = await ratingService.GetAllRatingsAsync(UserHelper.UserId);
+    }
+
+
+    //protected async Task ShowRatingCreate(int userSeenFilmId)
+    //{
+    //    var options = new ModalOptions { DisableBackgroundCancel = true };
+
+    //    var parameters = new ModalParameters();
+    //    parameters.Add(nameof(RatingCreate.userSeenFilmId), userSeenFilmId);
+
+    //    var messageForm = Modal.Show<RatingCreate>("Rate Movie", parameters, options);
+    //    var result = await messageForm.Result;
+    //    await Load();
+    //    StateHasChanged();
+    //}
+
+    protected async Task Delete(int id)
+    {
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
+        if (confirmed)
+        {
+            await userSeenTvShowService.DeleteUserSeenTvShow(id);
+            await Load();
+            StateHasChanged();
+        }
+    }
+
+    protected async Task Load()
+    {
+        userSeenTvShows = await userSeenTvShowService.GetUserSeenTvShowAsync(UserHelper.UserId);
+        //ratings = await ratingService.GetAllRatingsAsync(UserHelper.UserId);
+    }
+    }

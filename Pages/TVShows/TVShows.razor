@@ -9,19 +9,23 @@
     @inject IModalService Modal
     @using shows_buzz_feed.Pages*@
 
+
 @using shows_buzz_feed.Data
 @using shows_buzz_feed.Services
 @using shows_buzz_feed.Mappings.TVShows
+@using shows_buzz_feed.Mappings.UserSeenTvShow
+@using shows_buzz_feed.Helpers
 @using Microsoft.JSInterop
 @using Blazored.Modal.Services
 @inject TVShowsService TVShowsService
+@inject UserSeenTvShowService userSeenTvShowService
 @inject IJSRuntime jsRuntime
 @inject IModalService Modal
 @using shows_buzz_feed.Pages.TVShows
 
-<h3>TVShows</h3>
+<h1>TV Shows list</h1>
 
-<p>Here you can see all the films</p>
+<p>Here you can see all the tv shows</p>
 
 @if (tvshows == null)
 {
@@ -33,73 +37,108 @@ else
         <tr>
             <th>Name</th>
             <th>Genre</th>
-            @*<th>Edit</th>
-                <th>Delete</th>*@
+            <th>Director</th>
+            <th>Release year</th>
+            <th>Edit</th>
+            <th>Delete</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var TVShows in tvshows.TVShows)
+        @foreach (var tvshow in tvshows.TVShows)
         {
-<tr>
-    <td>@TVShows.Name</td>
-    <td>@TVShows.Genre</td>
-    @*<td><button @onclick="@(() => ShowEditTVShows(film.Id))" class="btn btn-warning">Edit</button></td>
-        <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>*@
-</tr>}
-        @*<tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>*@
+        <tr>
+            <td>@tvshow.Name</td>
+            <td>@tvshow.Genre</td>
+            <td>@tvshow.Director</td>
+            <td>@tvshow.ReleaseYear </td>
+            <td><button @onclick="@(() => ShowEditTvShow(tvshow.Id))" class="btn btn-warning">Edit</button></td>
+            <td><button @onclick="@(() => Delete(tvshow.Id))" class="btn btn-danger">Delete</button></td>
+            @if (!userSeenTvShows.UserSeenTvShows.Any(e => e.TvShowId == tvshow.Id && e.UserId == UserHelper.UserId))
+            {
+                <td><button @onclick="@(() => TvShowSeen(tvshow.Id))" class="btn btn-danger">Seen</button></td>
+            }
+        </tr>}
+        <tr><button @onclick="@(() => ShowCreateTvShow())" class="btn btn-info">Create Film</button></tr>
     </tbody>
 </table>}
 
 @code { private TVShowsListViewModel tvshows;
-
     string _message;
+    private UserSeenTvShowListViewModel userSeenTvShows;
+
 
     protected override async Task OnInitializedAsync()
     {
         tvshows = await TVShowsService.GetTVShowsAsync();
+        userSeenTvShows = await userSeenTvShowService.GetUserSeenTvShowAsync(UserHelper.UserId);
     }
 
-    //protected async Task Delete(int id)
-    //{
-    //    bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
-    //    if (confirmed)
-    //    {
-    //        await TVShowsService.DeleteTVShowsAsync(id);
-    //        await Load();
-    //        StateHasChanged();
-    //    }
-    //}
+    protected async Task Delete(int id)
+    {
+        bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
+        if (confirmed)
+        {
+            await TVShowsService.DeleteTVShowAsync(id);
+            await Load();
+            StateHasChanged();
+        }
+    }
 
-    //protected async void ShowCreateFilm()
-    //{
-    //    var options = new ModalOptions { DisableBackgroundCancel = true };
-    //    var messageForm = Modal.Show<FilmCreate>("Create Film", options);
-    //    var result = await messageForm.Result;
+    protected async void ShowCreateTvShow()
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+        var messageForm = Modal.Show<TVShowCreate>("Create tv show", options);
+        var result = await messageForm.Result;
 
-    //    if (!result.Cancelled)
-    //    {
-    //        _message = result.Data?.ToString() ?? string.Empty;
-    //        await Load();
-    //        StateHasChanged();
-    //    }
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
 
-    //}
+    }
 
-    //protected async Task ShowEditFilm(int filmId)
-    //{
-    //    var options = new ModalOptions { DisableBackgroundCancel = true };
-    //    var parameters = new ModalParameters();
-    //    parameters.Add(nameof(FilmEdit.filmId), filmId);
-    //    var messageForm = Modal.Show<FilmEdit>("Edit Film", parameters, options);
-    //    var result = await messageForm.Result;
+    protected async Task ShowEditTvShow(int tvShowId)
+    {
+        var options = new ModalOptions { DisableBackgroundCancel = true };
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(TVShowEdit.tvShowId), tvShowId);
+        var messageForm = Modal.Show<TVShowEdit>("Edit tv show", parameters, options);
+        var result = await messageForm.Result;
 
-    //    if (!result.Cancelled)
-    //    {
-    //        _message = result.Data?.ToString() ?? string.Empty;
-    //        await Load();
-    //        StateHasChanged();
-    //    }
-    //}
+        if (!result.Cancelled)
+        {
+            _message = result.Data?.ToString() ?? string.Empty;
+            await Load();
+            StateHasChanged();
+        }
+    }
+
+    protected async Task TvShowSeen(int tvShowId)
+    {
+        CreateUserSeenTvShowCommand create = new CreateUserSeenTvShowCommand()
+        {
+            TvShowId = tvShowId,
+            UserId = UserHelper.UserId
+        };
+
+        var result = await userSeenTvShowService.InsertUserSeenTvShowAsync(create);
+        await Load();
+        StateHasChanged();
+        //if (result > 0)
+        //    {
+        //        toastService.ShowSuccess("Route has been added successfully");
+        //        await loadItems();
+        //        tab = Tab.Overview;
+        //        StateHasChanged();
+        //    }
+        //    else
+        //    {
+        //        toastService.ShowError("Route has not been added");
+        //    }
+    }
+
 
     protected async Task Load()
     {

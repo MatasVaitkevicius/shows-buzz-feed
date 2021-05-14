@@ -50,5 +50,61 @@ namespace shows_buzz_feed.Controllers
 
             return dto;
         }
+
+        [HttpPost]
+        public async Task<ActionResult<int>> Post([FromBody] CreateTvShowCommand command)
+        {
+            var entity = new TVShows
+            {
+                Name = command.Name,
+                Genre = command.Genre,
+                Director = command.Director,
+                ReleaseYear = command.ReleaseYear
+            };
+
+            _context.TVShows.Add(entity);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(entity.Id);
+        }
+
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> Put([FromBody] UpdateTVShowCommand command)
+        {
+            var entity = await _context.TVShows.FirstOrDefaultAsync(e => e.Id == command.Id);
+
+            if (entity == null)
+            {
+                throw new NotFoundException(nameof(TVShows), command.Id);
+            }
+
+            entity.Name = command.Name;
+            entity.Genre = command.Genre;
+            entity.Director = command.Director;
+            entity.ReleaseYear = command.ReleaseYear;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _context.TVShows.FirstOrDefaultAsync(e => e.Id == id);
+
+            if (result != null)
+            {
+                _context.Remove(result);
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
     }
 }
