@@ -94,7 +94,7 @@ namespace shows_buzz_feed.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteQuestion(int id)
         {
             var result = await _context.Question.FirstOrDefaultAsync(e => e.Id == id);
 

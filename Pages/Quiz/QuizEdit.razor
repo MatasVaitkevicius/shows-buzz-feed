@@ -6,7 +6,7 @@
 @if (quiz != null)
 {
 <div class="simple-form">
-    <EditForm Model="@quiz" OnValidSubmit="@UpdateQuiz">
+    <EditForm Model="@quiz" OnValidSubmit="@Submit">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
@@ -43,7 +43,7 @@ else
         quiz = await service.GetQuizAsync(quizId);
     }
 
-    protected async Task UpdateQuiz()
+    protected async Task Submit()
     {
         UpdateQuizCommand update = new UpdateQuizCommand()
         {

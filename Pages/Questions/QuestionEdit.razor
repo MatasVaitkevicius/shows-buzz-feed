@@ -9,7 +9,7 @@
 @if (question != null)
 {
 <div class="simple-form">
-    <EditForm Model="@question" OnValidSubmit="@UpdateQuestion">
+    <EditForm Model="@question" OnValidSubmit="@Update">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
@@ -69,7 +69,7 @@ else
         question = await service.GetQuestionAsync(questionId);
     }
 
-    protected async Task UpdateQuestion()
+    protected async Task Update()
     {
         if (question.QuizId == "--")
         {

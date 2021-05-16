@@ -51,14 +51,14 @@ else
             <td>@tvshow.Genre</td>
             <td>@tvshow.Director</td>
             <td>@tvshow.ReleaseYear </td>
-            <td><button @onclick="@(() => ShowEditTvShow(tvshow.Id))" class="btn btn-warning">Edit</button></td>
-            <td><button @onclick="@(() => Delete(tvshow.Id))" class="btn btn-danger">Delete</button></td>
+            <td><button @onclick="@(() => EditTVShow(tvshow.Id))" class="btn btn-warning">Edit</button></td>
+            <td><button @onclick="@(() => DeleteTVShow(tvshow.Id))" class="btn btn-danger">Delete</button></td>
             @if (!userSeenTvShows.UserSeenTvShows.Any(e => e.TvShowId == tvshow.Id && e.UserId == UserHelper.UserId))
             {
                 <td><button @onclick="@(() => TvShowSeen(tvshow.Id))" class="btn btn-danger">Seen</button></td>
             }
         </tr>}
-        <tr><button @onclick="@(() => ShowCreateTvShow())" class="btn btn-info">Create Film</button></tr>
+        <tr><button @onclick="@(() => CreateTvShow())" class="btn btn-info">Create TV Show</button></tr>
     </tbody>
 </table>}
 
@@ -73,7 +73,7 @@ else
         userSeenTvShows = await userSeenTvShowService.GetUserSeenTvShowAsync(UserHelper.UserId);
     }
 
-    protected async Task Delete(int id)
+    protected async Task DeleteTVShow(int id)
     {
         bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
         if (confirmed)
@@ -84,7 +84,7 @@ else
         }
     }
 
-    protected async void ShowCreateTvShow()
+    protected async void CreateTvShow()
     {
         var options = new ModalOptions { DisableBackgroundCancel = true };
         var messageForm = Modal.Show<TVShowCreate>("Create tv show", options);
@@ -99,7 +99,7 @@ else
 
     }
 
-    protected async Task ShowEditTvShow(int tvShowId)
+    protected async Task EditTVShow(int tvShowId)
     {
         var options = new ModalOptions { DisableBackgroundCancel = true };
         var parameters = new ModalParameters();

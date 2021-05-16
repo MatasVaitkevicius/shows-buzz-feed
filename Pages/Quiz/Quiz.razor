@@ -37,11 +37,11 @@ else
     <td>@Quiz.TimesCompleted</td>
     <td>@Quiz.DateCreated</td>
     <td><button @onclick="@(() => ShowCreateQuestion(Quiz.Id))" class="btn btn-dark">Questions</button></td>
-    <td><button @onclick="@(() => ShowEditQuiz(Quiz.Id))" class="btn btn-warning">Edit</button></td>
-    <td><button @onclick="@(() => Delete(Quiz.Id))" class="btn btn-danger">Delete</button></td>
+    <td><button @onclick="@(() => EditQuiz(Quiz.Id))" class="btn btn-warning">Edit</button></td>
+    <td><button @onclick="@(() => DeleteQuiz(Quiz.Id))" class="btn btn-danger">Delete</button></td>
 </tr>
 }
-        <tr><button @onclick="@(() => ShowCreateQuiz())" class="btn btn-info">Create Quiz</button></tr>
+        <tr><button @onclick="@(() => CreateQuiz())" class="btn btn-info">Create Quiz</button></tr>
     </tbody>
 </table>}
 
@@ -54,7 +54,7 @@ else
         quizes = await QuizService.GetQuizesAsync();
     }
 
-    protected async Task Delete(int id)
+    protected async Task DeleteQuiz(int id)
     {
         bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
         if (confirmed)
@@ -65,7 +65,7 @@ else
         }
     }
 
-    protected async void ShowCreateQuiz()
+    protected async void CreateQuiz()
     {
         var options = new ModalOptions { DisableBackgroundCancel = true };
         var messageForm = Modal.Show<QuizCreate>("Create Quiz", options);
@@ -80,7 +80,7 @@ else
 
     }
 
-    protected async Task ShowEditQuiz(int questionId)
+    protected async Task EditQuiz(int questionId)
     {
         var options = new ModalOptions { DisableBackgroundCancel = true };
         var parameters = new ModalParameters();
