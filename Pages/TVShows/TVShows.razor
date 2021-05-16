@@ -53,7 +53,7 @@ else
             <td>@tvshow.ReleaseYear </td>
             <td><button @onclick="@(() => EditTVShow(tvshow.Id))" class="btn btn-warning">Edit</button></td>
             <td><button @onclick="@(() => DeleteTVShow(tvshow.Id))" class="btn btn-danger">Delete</button></td>
-            @if (!userSeenTvShows.UserSeenTvShows.Any(e => e.TvShowId == tvshow.Id && e.UserId == UserHelper.UserId))
+            @if (!userSeenTvShows.UserSeenTvShows.Any(e => e.TvShowId == tvshow.Id && e.UserId == UserHelper.UserId) && tvshow.ReleaseYear <= DateTime.Now.Year)
             {
                 <td><button @onclick="@(() => TvShowSeen(tvshow.Id))" class="btn btn-danger">Seen</button></td>
             }
