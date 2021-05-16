@@ -143,4 +143,5 @@ else
     protected async Task Load()
     {
         tvshows = await TVShowsService.GetTVShowsAsync();
+        userSeenTvShows = await userSeenTvShowService.GetUserSeenTvShowAsync(UserHelper.UserId);
     } }

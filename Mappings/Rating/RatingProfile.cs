@@ -15,9 +15,11 @@ namespace shows_buzz_feed.Mappings.Rating
                 .ForMember(pDTO => pDTO.DateRated, opt => opt.MapFrom(e => e.DateRated))
                 .ForMember(pDTO => pDTO.Comment, opt => opt.MapFrom(e => e.Comment))
                 .ForMember(pDTO => pDTO.Rate, opt => opt.MapFrom(e => e.Rate))
-                .ForMember(pDTO => pDTO.UserSeenFilmId, opt => opt.MapFrom(e => e.UserSeenFilmId))
                 .ForMember(pDTO => pDTO.UserId, opt => opt.MapFrom(e => e.UserId))
-                .ForMember(pDTO => pDTO.FilmName, opt => opt.MapFrom(e => e.UserSeenFilm != null ? e.UserSeenFilm.Film.Name : null));
+                .ForMember(pDTO => pDTO.UserSeenFilmId, opt => opt.MapFrom(e => e.UserSeenFilmId))
+                .ForMember(pDTO => pDTO.UserSeenTvShowId, opt => opt.MapFrom(e => e.UserSeenTvShowId))
+                .ForMember(pDTO => pDTO.FilmName, opt => opt.MapFrom(e => e.UserSeenFilm != null ? e.UserSeenFilm.Film.Name : null))
+                .ForMember(pDTO => pDTO.TvShowName, opt => opt.MapFrom(e => e.UserSeenTvShow != null ? e.UserSeenTvShow.TvShow.Name : null));
         }
     }
 }
