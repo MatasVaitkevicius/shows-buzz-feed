@@ -6,7 +6,7 @@
 @if (tvShow != null)
 {
     <div class="simple-form">
-        <EditForm Model="@tvShow" OnValidSubmit="@UpdateTvShow">
+        <EditForm Model="@tvShow" OnValidSubmit="@Submit">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
@@ -60,7 +60,7 @@ else
         tvShow = await service.GetTVShowsAsync(tvShowId);
     }
 
-    protected async Task UpdateTvShow()
+    protected async Task Submit()
     {
         UpdateTVShowCommand update = new UpdateTVShowCommand()
         {

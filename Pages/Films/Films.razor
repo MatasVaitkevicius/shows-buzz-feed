@@ -47,7 +47,7 @@
             <td>@film.Director</td>
             <td><button @onclick="@(() => ShowEditFilm(film.Id))" class="btn btn-warning">Edit</button></td>
             <td><button @onclick="@(() => Delete(film.Id))" class="btn btn-danger">Delete</button></td>
-            @if (!userSeenFilms.UserSeenFilms.Any(e => e.FilmId == film.Id && e.UserId == UserHelper.UserId))
+            @if (!userSeenFilms.UserSeenFilms.Any(e => e.FilmId == film.Id && e.UserId == UserHelper.UserId) && film.ReleaseYear <= DateTime.Now.Year)
             {
                 <td><button @onclick="@(() => MovieSeen(film.Id))" class="btn btn-danger">Seen</button></td>
 }

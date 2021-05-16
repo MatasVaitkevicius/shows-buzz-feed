@@ -1,13 +1,4 @@
 ﻿@page "/questions"
-@*@using shows_buzz_feed.Data
-    @using shows_buzz_feed.Question
-    @using shows_buzz_feed.Mappings.Question
-    @using Microsoft.JSInterop
-    @using Blazored.Modal.Question
-    @inject QuestionService QuestionService
-    @inject IJSRuntime jsRuntime
-    @inject IModalService Modal
-    @using shows_buzz_feed.Pages*@
 
 @using shows_buzz_feed.Data
 @using shows_buzz_feed.Services
@@ -47,10 +38,10 @@ else
     <td>@Question.Question_No</td>
     <td>@Question.QuizId</td>
     <td><button @onclick="@(() => ShowCreateAnswer(Question.Id))" class="btn btn-dark">Answers</button></td>
-    <td><button @onclick="@(() => ShowEditQuestion(Question.Id))" class="btn btn-warning">Edit</button></td>
-    <td><button @onclick="@(() => Delete(Question.Id))" class="btn btn-danger">Delete</button></td>
+    <td><button @onclick="@(() => EditQuestion(Question.Id))" class="btn btn-warning">Edit</button></td>
+    <td><button @onclick="@(() => DeleteQuestion(Question.Id))" class="btn btn-danger">Delete</button></td>
 </tr>}
-        <tr><button @onclick="@(() => ShowCreateQuestion())" class="btn btn-info">Create Question</button></tr>
+        <tr><button @onclick="@(() => CreateQuestion())" class="btn btn-info">Create Question</button></tr>
     </tbody>
 </table>}
 
@@ -69,7 +60,7 @@ else
         questions = await QuestionService.GetQuestionsAsync();
     }
 
-    protected async Task Delete(int id)
+    protected async Task DeleteQuestion(int id)
     {
         bool confirmed = await jsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete?");
         if (confirmed)
@@ -101,7 +92,7 @@ else
 
     }
 
-    protected async void ShowCreateQuestion()
+    protected async void CreateQuestion()
     {
         var options = new ModalOptions { DisableBackgroundCancel = true };
         var messageForm = Modal.Show<QuestionCreate>("Create Question", options);
@@ -116,7 +107,7 @@ else
 
     }
 
-    protected async Task ShowEditQuestion(int questionId)
+    protected async Task EditQuestion(int questionId)
     {
         var options = new ModalOptions { DisableBackgroundCancel = true };
         var parameters = new ModalParameters();

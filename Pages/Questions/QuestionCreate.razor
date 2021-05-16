@@ -13,7 +13,7 @@
 @inject IModalService Modal
 
 <div style="border-radius: 5px;background-color: #f2f2f2;padding: 20px;">
-    <EditForm Model="@questionModel" OnValidSubmit="@SubmitQuestion">
+    <EditForm Model="@questionModel" OnValidSubmit="@Create">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
@@ -106,7 +106,7 @@
 
     }
 
-    private async Task SubmitQuestion(EditContext question)
+    private async Task Create(EditContext question)
     {
         if (questionModel.QuizId == null)
         {
