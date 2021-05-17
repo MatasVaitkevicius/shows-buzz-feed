@@ -11,6 +11,7 @@
 @inject RatingService ratingService
 @inject IJSRuntime jsRuntime
 @inject IModalService Modal
+@inject NavigationManager NavigationManager
 @using shows_buzz_feed.Pages.Ratings
 
 
@@ -46,12 +47,10 @@ else
     <td>@userSeenFilm.CreatedAt</td>
     @if (!ratings.Ratings.Any(e => e.UserSeenFilmId == userSeenFilm.Id && e.UserId == UserHelper.UserId))
     {
-<td><button @onclick="@(() => ShowRatingCreate(userSeenFilm.Id))" class="btn btn-warning">Rate Movie</button></td>
-}
+<td><button @onclick="@(() => ShowRatingCreate(userSeenFilm.Id))" class="btn btn-warning">Rate Movie</button></td>}
 
     <td><button @onclick="@(() => Delete(userSeenFilm.Id))" class="btn btn-danger">Delete</button></td>
-</tr>
-}
+</tr>}
         @*<tr><button @onclick="@(() => ShowCreateFilm())" class="btn btn-info">Create Film</button></tr>*@
     </tbody>
 </table>}
@@ -76,8 +75,10 @@ else
 
         var messageForm = Modal.Show<RatingCreate>("Rate Movie", parameters, options);
         var result = await messageForm.Result;
-        await Load();
-        StateHasChanged();
+        //await Load();
+        //StateHasChanged();
+        NavigationManager.NavigateTo("ratings", true);
+
     }
 
     protected async Task Delete(int id)

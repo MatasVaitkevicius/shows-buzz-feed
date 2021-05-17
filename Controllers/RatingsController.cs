@@ -31,7 +31,7 @@ namespace shows_buzz_feed.Controllers
             {
                 var model = new RatingListViewModel()
                 {
-                    Ratings = _mapper.Map<List<RatingViewModel>>(_context.Ratings.Where(e => e.UserId == id).Include(e => e.UserSeenFilm).Include(e => e.UserSeenFilm.Film))
+                    Ratings = _mapper.Map<List<RatingViewModel>>(_context.Ratings.Where(e => e.UserId == id).Include(e => e.UserSeenFilm).Include(e => e.UserSeenFilm.Film).Include(e => e.UserSeenTvShow).Include(e => e.UserSeenTvShow.TvShow))
                 };
 
                 return model;
@@ -53,20 +53,29 @@ namespace shows_buzz_feed.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> Post([FromBody] CreateRatingCommand command)
         {
-            var entity = new Rating
+
+            try
             {
-                DateRated = DateTime.Today,
-                Comment = command.Comment,
-                Rate = command.Rate,
-                UserId  = command.UserId,
-                UserSeenFilmId = command.UserSeenFilmId,
-            };
+                var entity = new Rating
+                {
+                    DateRated = DateTime.Now,
+                    Comment = command.Comment,
+                    Rate = command.Rate,
+                    UserId = command.UserId,
+                    UserSeenFilmId = command.UserSeenFilmId,
+                    UserSeenTvShowId = command.UserSeenTvShowId,
 
-            _context.Ratings.Add(entity);
+                };
+                _context.Ratings.Add(entity);
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-            return Ok(entity.Id);
+                return Ok(entity.Id);
+            }
+            catch (Exception e)
+            {
+                throw e.InnerException;
+            }
         }
     }
 }

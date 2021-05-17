@@ -141,12 +141,17 @@ namespace shows_buzz_feed.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserSeenFilmId")
+                    b.Property<int?>("UserSeenFilmId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserSeenTvShowId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserSeenFilmId");
+
+                    b.HasIndex("UserSeenTvShowId");
 
                     b.ToTable("Ratings");
                 });
@@ -266,11 +271,15 @@ namespace shows_buzz_feed.Migrations
                 {
                     b.HasOne("shows_buzz_feed.Models.UserSeenFilm", "UserSeenFilm")
                         .WithMany("Ratings")
-                        .HasForeignKey("UserSeenFilmId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserSeenFilmId");
+
+                    b.HasOne("shows_buzz_feed.Models.UserSeenTvShow", "UserSeenTvShow")
+                        .WithMany("Ratings")
+                        .HasForeignKey("UserSeenTvShowId");
 
                     b.Navigation("UserSeenFilm");
+
+                    b.Navigation("UserSeenTvShow");
                 });
 
             modelBuilder.Entity("shows_buzz_feed.Models.UserSeenFilm", b =>
@@ -295,7 +304,7 @@ namespace shows_buzz_feed.Migrations
             modelBuilder.Entity("shows_buzz_feed.Models.UserSeenTvShow", b =>
                 {
                     b.HasOne("shows_buzz_feed.Models.TVShows", "TvShow")
-                        .WithMany()
+                        .WithMany("UserSeenTvShows")
                         .HasForeignKey("TvShowId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -326,12 +335,22 @@ namespace shows_buzz_feed.Migrations
                     b.Navigation("Questions");
                 });
 
+            modelBuilder.Entity("shows_buzz_feed.Models.TVShows", b =>
+                {
+                    b.Navigation("UserSeenTvShows");
+                });
+
             modelBuilder.Entity("shows_buzz_feed.Models.User", b =>
                 {
                     b.Navigation("UserSeenFilms");
                 });
 
             modelBuilder.Entity("shows_buzz_feed.Models.UserSeenFilm", b =>
+                {
+                    b.Navigation("Ratings");
+                });
+
+            modelBuilder.Entity("shows_buzz_feed.Models.UserSeenTvShow", b =>
                 {
                     b.Navigation("Ratings");
                 });

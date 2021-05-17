@@ -60,6 +60,10 @@ namespace shows_buzz_feed.Data
                 .HasOne(e => e.UserSeenFilm)
                 .WithMany(i => i.Ratings)
                 .HasForeignKey(e => e.UserSeenFilmId);
+            builder.Entity<Rating>()
+                .HasOne(e => e.UserSeenTvShow)
+                .WithMany(i => i.Ratings)
+                .HasForeignKey(e => e.UserSeenTvShowId);
             builder.Entity<Question>()
                 .Property(e => e.Id)
                 .ValueGeneratedOnAdd();

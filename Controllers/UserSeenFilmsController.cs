@@ -51,7 +51,7 @@ namespace shows_buzz_feed.Controllers
                 {
                     FilmId = command.FilmId,
                     UserId = command.UserId,
-                    CreatedAt = DateTime.Today,
+                    CreatedAt = DateTime.Now,
                 };
 
                 _context.UserSeenFilms.Add(entity);

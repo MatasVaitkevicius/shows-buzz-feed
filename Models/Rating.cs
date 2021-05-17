@@ -16,6 +16,8 @@ namespace shows_buzz_feed.Models
         public int Rate { get; set; }
         public UserSeenFilm UserSeenFilm { get; set; }
         public int UserId { get; set; }
-        public int UserSeenFilmId { get; set; }
+        public int? UserSeenFilmId { get; set; }
+        public UserSeenTvShow UserSeenTvShow { get; set; }
+        public int? UserSeenTvShowId { get; set; }
     }
 }

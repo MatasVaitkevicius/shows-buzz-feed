@@ -51,7 +51,7 @@ namespace shows_buzz_feed.Controllers
                 {
                     TvShowId = command.TvShowId,
                     UserId = command.UserId,
-                    CreatedAt = DateTime.Today,
+                    CreatedAt = DateTime.Now,
                 };
 
                 _context.UserSeenTvShows.Add(entity);

@@ -14,5 +14,10 @@ namespace shows_buzz_feed.Models
         public string Genre { get; set; }
         public string Director { get; set; }
         public int ReleaseYear { get; set; }
+        public TVShows()
+        {
+            UserSeenTvShows = new List<UserSeenTvShow>();
+        }
+        public List<UserSeenTvShow>? UserSeenTvShows { get; set; }
     }
 }

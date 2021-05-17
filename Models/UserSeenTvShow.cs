@@ -14,9 +14,10 @@ namespace shows_buzz_feed.Models
         public int UserId { get; set; }
         public User User { get; set; }
         public DateTime CreatedAt { get; set; }
-        //public UserSeenTvShow()
-        //{
-        //    Ratings = new List<Rating>();
-        //}
+        public UserSeenTvShow()
+        {
+            Ratings = new List<Rating>();
+        }
+        public List<Rating>? Ratings { get; set; }
     }
 }
