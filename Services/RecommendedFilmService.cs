@@ -76,7 +76,7 @@ namespace shows_buzz_feed.Services
             if (userSeenFilms.UserSeenFilms.Count == 0)
             {
                 filmAndMessage.Item2 = "Movies watching history is empty. Showing random movie!";
-                filmAndMessage.Item1 = findUnreleasedFilm(films);
+                filmAndMessage.Item1 = findRandomOrUnreleasedFilm(films);
                 return filmAndMessage;
             }
 
@@ -106,14 +106,14 @@ namespace shows_buzz_feed.Services
                 }
                 else {
                     filmAndMessage.Item2 = "All recommended movies are seen! No unreleased movies to show!";
-                    filmAndMessage.Item1 = findUnreleasedFilm(newFilms);
+                    filmAndMessage.Item1 = findRandomOrUnreleasedFilm(newFilms);
                 }
             }
             else 
             {
                 filmAndMessage.Item2 = "All movies are seen! No unreleased movies to show!";
                 //if (films.)
-                filmAndMessage.Item1 = findUnreleasedFilm(newFilms);
+                filmAndMessage.Item1 = findRandomOrUnreleasedFilm(newFilms);
             }
             return filmAndMessage;
         }
@@ -256,7 +256,7 @@ namespace shows_buzz_feed.Services
             return film;
         }
 
-        public FilmViewModel findUnreleasedFilm(FilmListViewModel films)
+        public FilmViewModel findRandomOrUnreleasedFilm(FilmListViewModel films)
         {
 
             if (films.Films.Count() > 0)

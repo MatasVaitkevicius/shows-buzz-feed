@@ -77,7 +77,7 @@ namespace shows_buzz_feed.Services
             if (userSeenTvShows.UserSeenTvShows.Count == 0)
             {
                 tvShowAndMessage.Item2 = "Tv show watching history is empty. Showing random tv show!";
-                tvShowAndMessage.Item1 = findUnreleasedTvShow(tvShows);
+                tvShowAndMessage.Item1 = findRandomOrUnreleasedTvShow(tvShows);
                 return tvShowAndMessage;
             }
 
@@ -108,14 +108,14 @@ namespace shows_buzz_feed.Services
                 else
                 {
                     tvShowAndMessage.Item2 = "All recommended tv shows are seen! No unreleased tv shows to show!";
-                    tvShowAndMessage.Item1 = findUnreleasedTvShow(newTvShows);
+                    tvShowAndMessage.Item1 = findRandomOrUnreleasedTvShow(newTvShows);
                 }
             }
             else
             {
                 tvShowAndMessage.Item2 = "All tv shows are seen! No unreleased tv shows to show!";
                 //if (tvShows.)
-                tvShowAndMessage.Item1 = findUnreleasedTvShow(newTvShows);
+                tvShowAndMessage.Item1 = findRandomOrUnreleasedTvShow(newTvShows);
             }
             return tvShowAndMessage;
         }
@@ -243,7 +243,7 @@ namespace shows_buzz_feed.Services
             return tvShow;
         }
 
-        public TVShowsViewModel findUnreleasedTvShow(TVShowsListViewModel tvShows)
+        public TVShowsViewModel findRandomOrUnreleasedTvShow(TVShowsListViewModel tvShows)
         {
 
             if (tvShows.TVShows.Count() > 0)
