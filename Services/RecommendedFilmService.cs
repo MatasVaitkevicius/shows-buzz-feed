@@ -117,6 +117,23 @@ namespace shows_buzz_feed.Services
             }
             return filmAndMessage;
         }
+
+        //public bool checkIfTvShowsListIsEmpty(FilmListViewModel films) {
+        //    if (films.Films.Count == 0)
+        //    {
+        //        return true;
+        //    }
+        //    else return false;
+        //}
+        //public bool checkIfSeenTVShowsListIsEmpty(UserSeenFilmListViewModel films)
+        //{
+        //    if (films.UserSeenFilms.Count == 0)
+        //    {
+        //        return true;
+        //    }
+        //    else return false;
+        //}
+
         public bool checkIfAllFilmsAreSeen(FilmListViewModel films, UserSeenFilmListViewModel userSeenFilms)
         {
             if (films.Films.Count == userSeenFilms.UserSeenFilms.Count)
