@@ -190,7 +190,7 @@ namespace shows_buzz_feed.Services
             TVShowsListViewModel foundTvShows = new TVShowsListViewModel();
 
             foundTvShows.TVShows = (from tvShow in tvShows.TVShows
-                                where favoriteDirectors.Contains(tvShow.Genre) == true
+                                where favoriteDirectors.Contains(tvShow.Director) == true
                                 select tvShow).ToList();
 
 
@@ -199,10 +199,10 @@ namespace shows_buzz_feed.Services
 
         public List<int> findFavoriteYears(UserSeenTvShowListViewModel userSeenTvShows, TVShowsListViewModel tvShows)
         {
-            var seenTvShowsWithGenres = (from objA in tvShows.TVShows
+            var seenTvShowsWithYears = (from objA in tvShows.TVShows
                                        join objB in userSeenTvShows.UserSeenTvShows on objA.Id equals objB.TvShowId
                                        select objA/*or objB*/).ToList();
-            var pairs = seenTvShowsWithGenres.GroupBy(value => value.ReleaseYear).OrderByDescending(group => group.Count());
+            var pairs = seenTvShowsWithYears.GroupBy(value => value.ReleaseYear).OrderByDescending(group => group.Count());
             int modeCount = pairs.First().Count();
             List<int> favoriteYears = pairs.Where(pair => pair.Count() == modeCount)
                     .Select(pair => pair.Key)

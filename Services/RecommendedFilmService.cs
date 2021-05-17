@@ -204,7 +204,7 @@ namespace shows_buzz_feed.Services
             FilmListViewModel foundFilms = new FilmListViewModel();
 
             foundFilms.Films = (from film in films.Films
-                                where favoriteDirectors.Contains(film.Genre) == true
+                                where favoriteDirectors.Contains(film.Director) == true
                                 select film).ToList();
 
 
@@ -213,10 +213,10 @@ namespace shows_buzz_feed.Services
 
         public List<int> findFavoriteYears(UserSeenFilmListViewModel userSeenFilms, FilmListViewModel films)
         {
-            var seenFilmsWithGenres = (from objA in films.Films
+            var seenFilmsWithDirectors = (from objA in films.Films
                                        join objB in userSeenFilms.UserSeenFilms on objA.Id equals objB.FilmId
                                        select objA/*or objB*/).ToList();
-            var pairs = seenFilmsWithGenres.GroupBy(value => value.ReleaseYear).OrderByDescending(group => group.Count());
+            var pairs = seenFilmsWithDirectors.GroupBy(value => value.ReleaseYear).OrderByDescending(group => group.Count());
             int modeCount = pairs.First().Count();
             List<int> favoriteYears = pairs.Where(pair => pair.Count() == modeCount)
                     .Select(pair => pair.Key)

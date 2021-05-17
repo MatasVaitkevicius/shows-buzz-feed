@@ -10,7 +10,7 @@ using shows_buzz_feed.Data;
 namespace shows_buzz_feed.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210516162954_Initial")]
+    [Migration("20210517140206_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
